@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vendor Intelligence — Concept on Real Data · Office Revolution</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4F1E9;--paper-2:#EDE8DB;--card:#FBFAF5;--ink:#1C1A15;--muted:#6E6757;
+    --line:#D8D2C2;--clay:#B5512C;--clay-deep:#933F20;--sage:#5E6B53;--sage-soft:#E6E9DF;
+    --gold:#C08A2E;--ok:#4B6B45;--ok-soft:#E4ECDF;--warn:#9A6212;--warn-soft:#F3E8D2;
+    --red:#9B3026;--red-soft:#F1DAD5;
+    --shadow:0 1px 2px rgba(28,26,21,.05),0 12px 30px -16px rgba(28,26,21,.22);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--paper);color:var(--ink);font-family:"Hanken Grotesk",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  ::selection{background:var(--clay);color:var(--paper)}
+  .shell{display:grid;grid-template-columns:264px 1fr;min-height:100vh}
+  .rail{background:var(--ink);color:var(--paper);padding:34px 26px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:36px}
+  .brand{font-family:"Fraunces",serif;font-weight:600;font-size:21px;line-height:1.15}
+  .brand small{display:block;font-weight:500;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#A39B86;margin-top:9px}
+  .nav{display:flex;flex-direction:column;gap:3px}
+  .nav button{all:unset;cursor:pointer;display:flex;align-items:baseline;gap:13px;padding:12px 14px;border-radius:9px;color:#B8B09A;font-size:14.5px;font-weight:500;transition:.18s}
+  .nav button .n{font-family:"Fraunces",serif;font-size:12px;color:#7E7762;width:14px}
+  .nav button:hover{color:var(--paper);background:#26241D}
+  .nav button.active{background:var(--paper);color:var(--ink);font-weight:600}
+  .nav button.active .n{color:var(--clay)}
+  .navcount{background:var(--clay);color:var(--paper);font-size:11px;font-weight:700;border-radius:99px;padding:1px 7px;margin-left:auto}
+  .rail-foot{margin-top:auto;font-size:11.5px;line-height:1.7;color:#827B66}
+  .rail-foot b{color:#B8B09A;font-weight:600}
+  .src{font-size:10.5px;color:#6f6852;border-top:1px solid #2c2a22;padding-top:14px;line-height:1.6}
+
+  .stage{padding:54px 64px 90px;max-width:1200px}
+  .eyebrow{font-size:11.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--clay);margin-bottom:16px}
+  h1{font-family:"Fraunces",serif;font-weight:600;font-size:39px;line-height:1.08;letter-spacing:-.02em;max-width:20ch}
+  h2{font-family:"Fraunces",serif;font-weight:600;font-size:23px;letter-spacing:-.01em}
+  .lede{font-size:17px;line-height:1.6;color:var(--muted);max-width:64ch;margin-top:18px}
+  .rule{height:1px;background:var(--line);margin:36px 0}
+
+  .statband{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);margin-top:8px}
+  .statband .st{padding:24px 26px}
+  .statband .st+.st{border-left:1px solid var(--line)}
+  .statband .big{font-family:"Fraunces",serif;font-size:32px;font-weight:600;letter-spacing:-.02em}
+  .statband .big.bad{color:var(--red)}
+  .statband .big.good{color:var(--ok)}
+  .statband .lab{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.45}
+
+  .flow{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);margin-top:6px}
+  .flow .step{padding:28px;position:relative}
+  .flow .step+.step{border-left:1px solid var(--line)}
+  .flow .badge{font-family:"Fraunces",serif;font-size:13px;color:var(--clay);font-weight:600;margin-bottom:12px}
+  .flow .step h3{font-family:"Fraunces",serif;font-size:18px;font-weight:600;margin-bottom:8px}
+  .flow .step p{font-size:13.5px;line-height:1.6;color:var(--muted)}
+  .flow .arrow{position:absolute;right:-11px;top:50%;transform:translateY(-50%);z-index:2;width:22px;height:22px;border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-size:12px}
+  .flow .step:last-child .arrow{display:none}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 28px}
+  .panel h3{font-family:"Fraunces",serif;font-size:17px;font-weight:600;margin-bottom:13px;display:flex;align-items:center;gap:9px}
+  .panel h3 .dot{width:7px;height:7px;border-radius:50%;background:var(--clay)}
+  .panel ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+  .panel li{font-size:14px;line-height:1.5;padding-left:20px;position:relative}
+  .panel li::before{content:"";position:absolute;left:0;top:7px;width:6px;height:6px;border:1.5px solid var(--clay);border-radius:50%}
+  .panel.dark{background:var(--ink);border-color:var(--ink)}
+  .panel.dark h3,.panel.dark li{color:var(--paper)}
+  .panel.dark li::before{border-color:var(--gold)}
+  .panel.dark .sub{color:#A39B86}
+
+  .btn{all:unset;cursor:pointer;background:var(--ink);color:var(--paper);font-weight:600;font-size:13.5px;padding:12px 22px;border-radius:9px;transition:.16s;display:inline-flex;align-items:center;gap:9px}
+  .btn:hover{background:var(--clay)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost:hover{background:var(--paper-2)}
+  .btn.clay{background:var(--clay)}.btn.clay:hover{background:var(--clay-deep)}
+  .btn.sm{padding:8px 15px;font-size:12.5px}
+  .btn.warn{background:var(--warn)}.btn.warn:hover{background:#7d4f0e}
+
+  .badge-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:4px 11px;border-radius:999px;letter-spacing:.02em}
+  .b-sub{background:var(--warn-soft);color:var(--warn)}
+  .b-app{background:var(--ok-soft);color:var(--ok)}
+  .b-chg{background:#F0DAD2;color:var(--clay-deep)}
+  .b-tier{background:var(--sage-soft);color:var(--sage);text-transform:uppercase;letter-spacing:.08em}
+  .b-leg{background:var(--paper-2);color:var(--muted)}
+  .b-en{background:var(--ok-soft);color:var(--ok)}
+  .b-caut{background:var(--red-soft);color:var(--red)}
+  .b-reg{background:#E7E2D2;color:#5b513a;font-weight:700;letter-spacing:.06em}
+
+  label.f{display:block;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 7px}
+  input.f,select.f,textarea.f{width:100%;font-family:inherit;font-size:14px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:9px;padding:11px 13px;transition:.15s}
+  input.f:focus,select.f:focus,textarea.f:focus{outline:none;border-color:var(--clay);box-shadow:0 0 0 3px rgba(181,81,44,.12)}
+  textarea.f{resize:vertical;min-height:70px}
+  .field{margin-bottom:20px}.row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .chips{display:flex;flex-wrap:wrap;gap:9px}
+  .chip{cursor:pointer;font-size:13px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--card);transition:.14s;user-select:none}
+  .chip:hover{border-color:var(--clay)}.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .uploadbox{border:1.5px dashed var(--line);border-radius:11px;padding:20px;text-align:center;color:var(--muted);font-size:13.5px;background:var(--card);cursor:pointer}
+  .uploadbox b{color:var(--ink)}
+  .filechip{display:inline-flex;align-items:center;gap:8px;background:var(--paper-2);border:1px solid var(--line);border-radius:8px;padding:7px 12px;font-size:12.5px;margin:8px 8px 0 0}
+  .filechip .x{cursor:pointer;color:var(--muted);font-weight:700}
+  .formcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:32px 34px;max-width:760px;box-shadow:var(--shadow)}
+
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--ink);color:var(--paper);padding:15px 24px;border-radius:11px;font-size:14px;font-weight:500;box-shadow:var(--shadow);transition:.4s cubic-bezier(.16,1,.3,1);z-index:99;display:flex;gap:11px;align-items:center}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  .toast .tick{width:20px;height:20px;border-radius:50%;background:var(--ok);display:grid;place-items:center;font-size:12px}
+
+  .queue{display:flex;flex-direction:column;gap:16px;margin-top:8px}
+  .subcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 26px}
+  .subcard .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+  .subcard h3{font-family:"Fraunces",serif;font-size:19px;font-weight:600}
+  .subcard .meta{font-size:12.5px;color:var(--muted);margin-top:5px}
+  .kv{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:16px 0 4px;padding:16px 0;border-top:1px solid var(--line)}
+  .kv .k{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .kv .v{font-size:14px;font-weight:500}
+  .subcard .acts{display:flex;gap:10px;margin-top:16px;align-items:center;flex-wrap:wrap}
+  .approver-note{font-size:12px;color:var(--muted);margin-left:auto}
+  .emptyq{text-align:center;padding:60px 20px;color:var(--muted);background:var(--card);border:1px dashed var(--line);border-radius:14px}
+  .emptyq .big{font-family:"Fraunces",serif;font-size:21px;color:var(--ink);margin-bottom:8px}
+
+  .searchbar{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:18px}
+  .searchbar .grp{flex:1;min-width:140px}
+  .resulthead{display:flex;justify-content:space-between;align-items:baseline;margin:8px 0 16px}
+  .resulthead .count{font-size:13.5px;color:var(--muted)}
+  .resulthead .count b{color:var(--ink);font-family:"Fraunces",serif}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .seg button{all:unset;cursor:pointer;padding:9px 15px;font-size:12.5px;font-weight:600;color:var(--muted);transition:.14s}
+  .seg button+button{border-left:1px solid var(--line)}
+  .seg button.on{background:var(--ink);color:var(--paper)}
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  .vcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;cursor:pointer;transition:.16s;position:relative;overflow:hidden}
+  .vcard::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--clay);transform:scaleY(0);transform-origin:top;transition:.22s}
+  .vcard:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+  .vcard:hover::after{transform:scaleY(1)}
+  .vcard.caut::after{background:var(--red);transform:scaleY(1)}
+  .vcard .vh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .vcard h3{font-family:"Fraunces",serif;font-size:18px;font-weight:600;line-height:1.2}
+  .vcard .reg{font-size:12px;color:var(--muted);margin-top:5px;display:flex;gap:5px;align-items:center}
+  .vcard .cats{display:flex;flex-wrap:wrap;gap:6px;margin:13px 0 12px;min-height:22px}
+  .vcard .cat{font-size:11px;background:var(--paper-2);border:1px solid var(--line);padding:3px 9px;border-radius:7px;color:var(--muted)}
+  .vcard .nocat{font-size:11.5px;color:var(--clay);font-style:italic}
+  .meter{display:flex;gap:5px;margin-top:6px}
+  .meter .seg5{flex:1;height:5px;border-radius:3px;background:var(--paper-2)}
+  .meter .seg5.f{background:var(--ok)}
+  .meter .seg5.x{background:var(--red-soft)}
+  .complete-lab{font-size:11px;color:var(--muted);margin-top:7px;display:flex;justify-content:space-between}
+  .noresults{grid-column:1/-1;text-align:center;padding:54px;color:var(--muted);background:var(--card);border:1px dashed var(--line);border-radius:14px}
+
+  .scrim{position:fixed;inset:0;background:rgba(28,26,21,.42);opacity:0;pointer-events:none;transition:.3s;z-index:60}
+  .scrim.show{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;right:0;height:100vh;width:520px;max-width:94vw;background:var(--paper);box-shadow:-20px 0 50px -24px rgba(28,26,21,.4);transform:translateX(100%);transition:.34s cubic-bezier(.16,1,.3,1);z-index:61;overflow-y:auto}
+  .drawer.show{transform:translateX(0)}
+  .drawer .dh{padding:36px 40px 24px;border-bottom:1px solid var(--line)}
+  .drawer .dh .close{float:right;cursor:pointer;color:var(--muted);font-size:22px;line-height:1}
+  .drawer .dh h2{font-size:26px;margin:12px 0 8px}
+  .drawer .db{padding:28px 40px 60px}
+  .drawer .dl{display:grid;grid-template-columns:128px 1fr;gap:13px 18px;font-size:14px;margin-bottom:26px}
+  .drawer .dl .k{color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding-top:2px}
+  .drawer .dl .v{font-weight:500;line-height:1.5}
+  .drawer h4{font-family:"Fraunces",serif;font-size:15px;font-weight:600;margin:0 0 12px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+  .doc{display:flex;align-items:center;gap:13px;padding:12px 15px;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;cursor:pointer;transition:.15s}
+  .doc:hover{border-color:var(--clay);background:var(--paper-2)}
+  .doc .ic{width:34px;height:34px;border-radius:7px;background:var(--clay);color:var(--paper);display:grid;place-items:center;font-size:11px;font-weight:700}
+  .doc .nm{font-size:13.5px;font-weight:600}.doc .mt{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .contact{font-size:13.5px;line-height:1.6;padding:12px 0;border-bottom:1px solid var(--line)}
+  .contact:last-child{border:0}
+  .contact .ct{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--clay);margin-bottom:3px}
+  .gap{background:var(--warn-soft);border:1px solid #e3cf9f;border-left:3px solid var(--warn);border-radius:0 9px 9px 0;padding:14px 16px;font-size:13px;line-height:1.55;margin:18px 0}
+  .gap b{color:var(--warn)}
+  .cautbox{background:var(--red-soft);border:1px solid #e0b6ae;border-left:3px solid var(--red);border-radius:0 9px 9px 0;padding:14px 16px;font-size:13px;line-height:1.55;margin:16px 0}
+  .cautbox b{color:var(--red)}
+  .demonote{font-size:12px;color:var(--muted);background:var(--paper-2);border:1px solid var(--line);border-left:3px solid var(--gold);padding:10px 14px;border-radius:0 8px 8px 0;margin-top:22px;line-height:1.55}
+
+  /* ROI metric cards */
+  .roi{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .metric{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px 26px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:11px}
+  .metric.clay{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  .metric.clay .basis,.metric.clay .range,.metric.clay .dollar-sub{color:#A39B86}
+  .metric.clay .lab{color:var(--paper)}
+  .metric .big{font-family:"Fraunces",serif;font-size:38px;line-height:1;font-weight:600;letter-spacing:-.02em;color:var(--clay)}
+  .metric.clay .big{color:var(--gold)}
+  .metric .big .unit{font-family:"Hanken Grotesk";font-size:13px;font-weight:600;color:var(--muted);margin-left:8px;letter-spacing:.04em;text-transform:uppercase}
+  .metric.clay .big .unit{color:#A39B86}
+  .metric .lab{font-family:"Fraunces",serif;font-size:17px;font-weight:600;margin-top:-2px}
+  .metric .basis{font-size:12.5px;line-height:1.55;color:var(--muted)}
+  .metric .dollar{font-size:14px;font-weight:600;color:var(--ink);padding-top:8px;border-top:1px solid var(--line)}
+  .metric.clay .dollar{color:var(--paper);border-top-color:#35332B}
+  .metric .dollar-sub{display:block;font-size:11.5px;font-weight:500;color:var(--muted);margin-top:3px}
+  .metric .range{font-size:11.5px;color:var(--muted);font-style:italic}
+  .metric.clay [contenteditable]{outline:none;border-bottom:1px dashed var(--gold);padding:0 3px;cursor:text}
+  .metric.clay [contenteditable]:focus{background:rgba(192,138,46,.18)}
+  .combined{margin-top:20px;background:var(--paper-2);border:1px solid var(--line);border-radius:12px;padding:16px 22px;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;font-size:13.5px}
+  .combined .ckey{font-weight:600;color:var(--ink)}
+  .combined .cval{color:var(--muted)}
+  .combined .cval b{color:var(--ok);font-family:"Fraunces",serif;font-size:16px;font-weight:600}
+
+  /* Future Improvements */
+  .phase{margin-top:30px}
+  .phase-head{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
+  .phase-num{font-family:"Fraunces",serif;font-size:28px;font-weight:600;color:var(--clay);letter-spacing:-.02em}
+  .phase-title{font-family:"Fraunces",serif;font-size:21px;font-weight:600}
+  .phase-when{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-left:auto}
+  .improvements{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .imp{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;position:relative;overflow:hidden}
+  .imp::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--clay)}
+  .imp.high::before{background:var(--ok)}
+  .imp.med::before{background:var(--gold)}
+  .imp.def::before{background:var(--muted)}
+  .imp.def{opacity:.78}
+  .imp h4{font-family:"Fraunces",serif;font-size:15.5px;font-weight:600;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .imp .lev{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:5px;margin-left:auto}
+  .imp .lev.h{background:var(--ok-soft);color:var(--ok)}
+  .imp .lev.m{background:var(--warn-soft);color:var(--warn)}
+  .imp .lev.d{background:var(--paper-2);color:var(--muted)}
+  .imp p{font-size:13px;line-height:1.55;color:var(--muted)}
+  .imp .meta{margin-top:10px;font-size:11.5px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
+  .imp .meta b{color:var(--ink);font-weight:600}
+  .imp .why{margin-top:10px;font-size:12.5px;color:var(--ink);background:var(--paper-2);border-radius:7px;padding:9px 12px;line-height:1.5}
+  .imp .why b{color:var(--clay)}
+
+  /* clickable email link in contacts */
+  .emaillink{color:var(--clay);cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;transition:.14s}
+  .emaillink:hover{color:var(--clay-deep);text-decoration-style:solid}
+
+  /* SIF code badge in vendor drawer */
+  .sif-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;background:#EFEAD7;color:#7A6B3A;padding:3px 9px;border-radius:4px;margin-left:10px;vertical-align:middle;font-family:"Hanken Grotesk",sans-serif}
+
+  /* Pills under vendor name in drawer header */
+  .drawer-pills{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+  .pill{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:99px;letter-spacing:.02em}
+  .pill.p-qs{background:#FFF4E0;color:#8A5A12;border:1px solid #F3D9A4}
+  .pill.p-spiff{background:#E8F4E5;color:#3F6B2E;border:1px solid #C9E2BE}
+  .pill.p-mkt{background:#EEF2F6;color:#3F5468;border:1px solid #D5DEE6}
+
+  /* Capability bar on vendor cards in Designer Search */
+  .capbar{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .capbar:empty{display:none}
+  .cap{display:inline-flex;font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:99px;letter-spacing:.02em;line-height:1.4}
+  .cap-qs{background:#FFF4E0;color:#8A5A12}
+  .cap-spiff{background:#E8F4E5;color:#3F6B2E}
+  .cap-mkt{background:#EEF2F6;color:#3F5468}
+  .cap-ergo{background:#EAE6F4;color:#5A4A86}
+
+  /* Card footer: updated chip + add-to-project */
+  .vcard-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding-top:11px;border-top:1px solid var(--line)}
+  .updated-chip{font-size:11px;color:var(--muted);font-weight:500}
+  .addcart{font-family:inherit;font-size:12px;font-weight:600;background:#fff;border:1px solid var(--clay);color:var(--clay);padding:6px 12px;border-radius:99px;cursor:pointer;transition:.14s;white-space:nowrap}
+  .addcart:hover{background:var(--clay);color:var(--paper)}
+  .addcart.in{background:#F3EEDC;border-color:var(--gold);color:#6B5A1E}
+  .cartbar{display:flex;align-items:center;justify-content:space-between;gap:14px;background:linear-gradient(180deg,#FAF6EC,#fff);border:1px solid var(--gold);border-radius:10px;padding:13px 18px;margin:0 0 18px;flex-wrap:wrap}
+  .cartbar span{font-size:14px;color:var(--ink)}
+  /* Quote project (cart) page */
+  .cart-meta{display:flex;gap:16px;flex-wrap:wrap;background:linear-gradient(180deg,#FAF6EC,#fff);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:22px 0}
+  .cart-meta .grp{flex:1;min-width:200px;display:flex;flex-direction:column;gap:5px}
+  .cart-meta label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .cart-meta input,.cart-meta select{font-family:inherit;font-size:14px;padding:9px 12px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);outline:none}
+  .cart-meta input:focus,.cart-meta select:focus{border-color:var(--ink)}
+  .crow{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;border:1px solid var(--line);border-radius:10px;padding:15px 17px;margin-bottom:12px;background:#fff}
+  .crow-main{flex:1;min-width:0}
+  .crow-main h3{margin:0 0 5px;font-size:16px;font-family:'Fraunces',Georgia,serif;font-weight:600}
+  .crow-sub{font-size:12.5px;color:var(--muted);margin-bottom:9px}
+  .crow-to{font-size:13px;color:var(--ink)}
+  .crow-to b{font-weight:600}
+  .crow-noemail{font-size:12.5px;color:#A6552F}
+  .tmpl{margin-top:10px}
+  .tmpl summary{font-size:12px;color:var(--clay);cursor:pointer;font-weight:600;user-select:none}
+  .tmpl pre{white-space:pre-wrap;font-family:inherit;font-size:12.5px;color:#5C564A;background:#FAF6EC;border:1px solid var(--line);border-radius:8px;padding:11px 13px;margin:9px 0 0;line-height:1.5}
+  .crow-actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end;white-space:nowrap}
+  .crow-rm{background:transparent;border:0;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline}
+  .crow-rm:hover{color:#A6552F}
+  .mailbtn{font-family:inherit;font-size:13px;font-weight:600;background:var(--clay);color:var(--paper);border:0;padding:9px 16px;border-radius:7px;cursor:pointer;transition:.14s}
+  .mailbtn:hover{background:#B85C3B}
+  .mailbtn.done{background:#EaF3E6;color:#3F6B2E;border:1px solid #BFD9B5}
+  /* How to use page */
+  .howto-card{border:1px solid var(--line);border-radius:11px;padding:20px 22px;margin-bottom:16px;background:#fff}
+  .howto-card h3{margin:0 0 10px;font-size:18px;font-family:'Fraunces',Georgia,serif;font-weight:600;display:flex;align-items:center;gap:10px}
+  .howto-card h3 .ic{width:30px;height:30px;border-radius:8px;background:#F3EEDC;display:grid;place-items:center;font-size:15px}
+  .howto-card p{margin:0 0 10px;font-size:14.5px;line-height:1.65;color:#43403A}
+  .howto-card ul{margin:0;padding-left:20px}
+  .howto-card li{font-size:14px;line-height:1.6;color:#43403A;margin-bottom:6px}
+  .howto-card li b{font-weight:600;color:var(--ink)}
+
+  /* Filter toggle row in Designer Search */
+  .togglebar{display:flex;align-items:center;gap:10px;margin:14px 0 22px;flex-wrap:wrap;padding:10px 4px;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line)}
+  .toggle-lab{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-right:2px}
+  .toggle{font-family:inherit;font-size:13px;font-weight:500;background:#fff;border:1px solid var(--line);color:var(--ink);padding:7px 14px;border-radius:99px;cursor:pointer;transition:.14s;display:inline-flex;align-items:center;gap:8px}
+  .toggle:hover{border-color:var(--clay);color:var(--clay)}
+  .toggle.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .toggle-n{font-size:11px;font-weight:600;background:rgba(0,0,0,.08);padding:1px 6px;border-radius:99px}
+  .toggle.on .toggle-n{background:rgba(255,255,255,.18)}
+
+  /* Resource links section in drawer */
+  .reslist{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .reslink{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--clay);background:#FAF6EC;border:1px solid #E8DFC8;padding:7px 12px;border-radius:7px;text-decoration:none;transition:.14s;cursor:pointer}
+  .reslink:hover{background:var(--clay);color:#fff;border-color:var(--clay)}
+  .reslink.note{cursor:help;color:var(--muted);background:#F4F1E9;border-style:dashed}
+  .reslink.note:hover{background:#EFE9D7;color:var(--ink)}
+  .restxt{font-size:11px;color:var(--muted);font-style:italic}
+
+  /* COM ship-to box & operational notes */
+  .combox{background:#FAF6EC;border-left:3px solid var(--gold);padding:10px 14px;border-radius:0 6px 6px 0;font-size:13px;line-height:1.6;white-space:pre-wrap;color:var(--ink);font-family:"Hanken Grotesk",sans-serif}
+  .opnote{font-size:13px;color:var(--ink);background:#F8F6EF;padding:10px 14px;border-radius:6px;margin-top:10px;line-height:1.55}
+  .opnote b{color:var(--clay-deep)}
+
+  /* Intake form section dividers & yes/no toggles */
+  .section-divide{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--clay);font-weight:700;margin:24px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:8px}
+  .dvhelp{font-size:11.5px;color:var(--muted);font-weight:500;letter-spacing:.02em;text-transform:none}
+  .yn{display:inline-flex;gap:0;border:1px solid var(--line);border-radius:7px;overflow:hidden;width:fit-content}
+  .yn-btn{font-family:inherit;font-size:13px;font-weight:600;background:#fff;border:0;color:var(--muted);padding:9px 22px;cursor:pointer;transition:.14s}
+  .yn-btn:hover{background:#FAF6EC;color:var(--ink)}
+  .yn-btn.on{background:var(--ink);color:var(--paper)}
+  .fhelp{font-size:11.5px;color:var(--muted);margin-top:6px;line-height:1.5}
+  .spiffpdf{display:flex;align-items:center;margin-top:8px}
+
+  /* Pattern C lead-time block */
+  .leadtime-block{background:linear-gradient(180deg,#FAF6EC,#fff);border:1px solid var(--line);border-radius:10px;padding:16px 18px 18px;margin-bottom:18px}
+  .leadtime-block > label.f{display:block;margin-bottom:10px}
+  .fhint{font-weight:400;color:var(--muted);font-size:12px;letter-spacing:0;text-transform:none;font-style:italic;margin-left:4px}
+  .lt-quoted{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink);padding:10px 12px;background:#fff;border:1px solid var(--line);border-radius:7px;cursor:pointer;margin-bottom:14px;user-select:none}
+  .lt-quoted input[type=checkbox]{margin:0;width:15px;height:15px;cursor:pointer;accent-color:var(--clay)}
+  .lt-quoted-help{color:var(--muted);font-size:12px;font-style:italic;margin-left:2px}
+  .lt-quoted:has(input:checked){background:#F3EEDC;border-color:var(--clay)}
+  .lt-details{display:flex;flex-direction:column;gap:14px}
+  .lt-details.dim{opacity:.4;pointer-events:none}
+  .lt-row{display:flex;gap:14px;flex-wrap:wrap}
+  .lt-col{display:flex;flex-direction:column;gap:4px;min-width:120px}
+  .lt-col-grow{flex:1;min-width:200px}
+  .lt-sub{font-size:11.5px;color:var(--muted);font-weight:600;letter-spacing:.02em;text-transform:uppercase}
+  .lt-inline{display:flex;align-items:center;gap:8px}
+  .lt-unit{font-size:13px;color:var(--muted)}
+
+  /* Email mockup modal */
+  .emailmock{position:fixed;inset:0;background:rgba(28,26,21,.55);display:none;align-items:center;justify-content:center;z-index:80;padding:20px;opacity:0;transition:.22s}
+  .emailmock.show{display:flex;opacity:1}
+  .emailmock-inner{background:#fff;border-radius:14px;width:580px;max-width:100%;max-height:92vh;overflow:auto;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);transform:translateY(20px);transition:.28s cubic-bezier(.16,1,.3,1);font-family:"Hanken Grotesk",sans-serif}
+  .emailmock.show .emailmock-inner{transform:translateY(0)}
+  .emailmock-bar{display:flex;align-items:center;gap:12px;padding:14px 18px;background:#F4F1E9;border-bottom:1px solid var(--line);border-radius:14px 14px 0 0}
+  .emailmock-dots{display:flex;gap:6px}
+  .emailmock-dots span{width:11px;height:11px;border-radius:50%}
+  .emailmock-dots span:nth-child(1){background:#FF5F57}
+  .emailmock-dots span:nth-child(2){background:#FEBC2E}
+  .emailmock-dots span:nth-child(3){background:#28C840}
+  .emailmock-title{flex:1;font-size:13px;font-weight:600;color:var(--muted);text-align:center}
+  .emailmock-close{cursor:pointer;font-size:20px;color:var(--muted);line-height:1;padding:0 4px}
+  .emailmock-close:hover{color:var(--ink)}
+  .emailmock-pill{margin:16px 20px 10px;background:var(--warn-soft);border:1px solid #e3cf9f;border-left:3px solid var(--gold);font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--warn);padding:8px 12px;border-radius:0 7px 7px 0}
+  .emailmock-row{display:flex;padding:8px 20px;font-size:13.5px;border-bottom:1px solid #F0EDE3;align-items:center}
+  .emailmock-label{width:65px;color:var(--muted);font-weight:600;font-size:12px;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0}
+  .emailmock-val{color:var(--ink);font-weight:500;word-break:break-all}
+  .emailmock-val#em_sub{font-weight:600}
+  .emailmock-body{padding:18px 20px 20px;font-size:14px;line-height:1.65;color:var(--ink);white-space:pre-wrap;min-height:140px;background:#fff;border-top:0}
+  .emailmock-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 20px 20px;border-top:1px solid var(--line);flex-wrap:wrap}
+
+  /* Notes panel (review mode) */
+  .nbtn{position:fixed;bottom:24px;right:24px;z-index:60;background:var(--ink);color:var(--paper);border:0;border-radius:999px;padding:13px 22px;font-family:inherit;font-size:14.5px;font-weight:600;cursor:pointer;box-shadow:0 8px 24px rgba(28,26,21,.22);display:flex;align-items:center;gap:9px;transition:.18s}
+  .nbtn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(28,26,21,.28)}
+  .nbtn .nct{background:var(--clay);color:var(--paper);font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;line-height:1.4}
+  .nbtn .nct.zero{background:rgba(255,255,255,.18)}
+  .npanel{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:96vw;background:var(--paper);box-shadow:-12px 0 32px rgba(28,26,21,.18);z-index:70;transform:translateX(110%);transition:transform .28s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column}
+  .npanel.show{transform:translateX(0)}
+  .nhead{padding:18px 22px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .nhead h3{margin:0;font-size:18px;font-family:'Fraunces',Georgia,serif;font-weight:600;letter-spacing:-.01em}
+  .nclose{background:transparent;border:0;font-size:24px;color:var(--muted);cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px}
+  .nclose:hover{background:#F3EEDC;color:var(--ink)}
+  .nintro{font-size:12.5px;color:var(--muted);padding:12px 22px;line-height:1.55;background:#FAF6EC;border-bottom:1px solid var(--line)}
+  .nbody{flex:1;overflow-y:auto;padding:18px 22px 8px}
+  .nname{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+  .nname label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .nname input{font-family:inherit;font-size:14px;padding:9px 12px;border:1px solid var(--line);border-radius:7px;background:#fff;color:var(--ink);outline:none}
+  .nname input:focus{border-color:var(--ink)}
+  .nwhich{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--clay);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .nwhich .dot{width:7px;height:7px;border-radius:50%;background:var(--clay);display:inline-block}
+  .nta{width:100%;min-height:180px;font-family:inherit;font-size:14px;line-height:1.55;padding:12px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);outline:none;resize:vertical;box-sizing:border-box}
+  .nta:focus{border-color:var(--ink)}
+  .nother{margin-top:22px;border-top:1px solid var(--line);padding-top:16px}
+  .nother-h{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .nother-item{background:#fff;border:1px solid var(--line);border-radius:7px;padding:10px 12px;margin-bottom:8px;font-size:13px;cursor:pointer;transition:.14s}
+  .nother-item:hover{border-color:var(--ink);background:#FAF6EC}
+  .nother-item .lbl{font-weight:600;color:var(--ink);font-size:12px;margin-bottom:3px}
+  .nother-item .prev{color:var(--muted);font-size:12.5px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .nfoot{padding:14px 22px 20px;border-top:1px solid var(--line);background:#FAF6EC;display:flex;gap:10px;flex-wrap:wrap}
+  .nfoot button{flex:1;min-width:120px;font-family:inherit;font-size:14px;font-weight:600;padding:11px 16px;border-radius:7px;cursor:pointer;border:0;transition:.14s}
+  .nsend{background:var(--clay);color:var(--paper)}
+  .nsend:hover{background:#B85C3B}
+  .nsend:disabled{background:#D4C8A8;cursor:not-allowed}
+  .ncopy{background:#fff;color:var(--ink);border:1px solid var(--line)!important}
+  .ncopy:hover{background:#F3EEDC}
+  .noverlay{position:fixed;inset:0;background:rgba(28,26,21,.32);z-index:65;opacity:0;pointer-events:none;transition:.22s}
+  .noverlay.show{opacity:1;pointer-events:auto}
+
+  /* Footer attribution */
+  .attrib{margin-top:48px;padding-top:22px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);line-height:1.6}
+  .attrib b{color:var(--ink);font-weight:600}
+  .attrib a{color:var(--clay);text-decoration:none}
+  .attrib a:hover{text-decoration:underline}
+  .attrib em{font-style:italic;color:var(--muted)}
+
+  @media(max-width:1000px){.shell{grid-template-columns:1fr}.rail{position:static;height:auto}.stage{padding:34px 26px 70px}.flow,.grid2,.cards,.kv,.statband,.roi,.improvements{grid-template-columns:1fr}.flow .step+.step,.statband .st+.st{border-left:0;border-top:1px solid var(--line)}.flow .arrow{display:none!important}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div id="login-overlay" style="display:none;position:fixed;inset:0;z-index:99999;background:#F4F1E9;align-items:center;justify-content:center;font-family:'Hanken Grotesk',system-ui,sans-serif;">
+  <div style="max-width:380px;width:90%;background:#FBFAF5;border:1px solid #D8D2C2;border-radius:14px;padding:32px;box-shadow:0 12px 30px -16px rgba(28,26,21,.22);">
+    <div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#B5512C;margin-bottom:12px;">Office Revolution</div>
+    <h1 style="font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:26px;color:#1C1A15;margin:0 0 8px;">Vendor Intelligence</h1>
+    <p style="color:#6E6757;font-size:14px;margin:0 0 20px;">Sign in to access the vendor database.</p>
+    <button id="li-google" style="width:100%;padding:12px;border:1px solid #D8D2C2;border-radius:9px;background:#fff;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:14px;font-family:inherit;">Continue with Microsoft</button>
+    <div style="text-align:center;color:#6E6757;font-size:12px;margin-bottom:14px;">or</div>
+    <input id="li-email" type="email" placeholder="you@office-revolution.com" style="width:100%;padding:11px 13px;border:1px solid #D8D2C2;border-radius:9px;font-size:14px;margin-bottom:10px;font-family:inherit;box-sizing:border-box;">
+    <button id="li-magic" style="width:100%;padding:12px;border:none;border-radius:9px;background:#B5512C;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">Email me a sign-in link</button>
+    <p id="li-msg" style="color:#6E6757;font-size:12.5px;margin:14px 0 0;text-align:center;min-height:16px;"></p>
+  </div>
+</div>
+
+<div class="shell">
+  <aside class="rail">
+    <div class="brand">Vendor Intelligence<small>Office Revolution · Concept</small></div>
+    <nav class="nav" id="nav">
+      <button data-v="concept" class="active"><span class="n">00</span>The Concept</button>
+      <button data-v="howto"><span class="n">01</span>How to Use</button>
+      <button data-v="intake"><span class="n">02</span>Vendor Intake</button>
+      <button data-v="approve"><span class="n">03</span>Review &amp; Approve</button>
+      <button data-v="search"><span class="n">04</span>Designer Search</button>
+      <button data-v="cart"><span class="n">🛒</span>Quote Project <span class="navcount" id="navCart" style="display:none"></span></button>
+      <button data-v="future"><span class="n">05</span>Future Improvements</button>
+      <button data-v="db"><span class="n">▦</span>Vendor Database</button>
+    </nav>
+    <div class="rail-foot">
+      <b>Running on real data</b><br>
+      Every vendor below is from our actual Vendor Sheet — real names, real IL/OH/NC coverage, real contacts.
+    </div>
+    <div class="src">Source: “Vendor Sheet” (Drive)<br>545 vendors · 770 legacy rows parsed<br>Pulled <span id="pulldate"></span></div>
+  </aside>
+  <main class="stage" id="stage"></main>
+</div>
+<div class="scrim" id="scrim" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer"></div>
+<div class="emailmock" id="emailmock" onclick="if(event.target.id==='emailmock')closeEmailMock()">
+  <div class="emailmock-inner">
+    <div class="emailmock-bar">
+      <div class="emailmock-dots"><span></span><span></span><span></span></div>
+      <div class="emailmock-title">New Message</div>
+      <div class="emailmock-close" onclick="closeEmailMock()">×</div>
+    </div>
+    <div class="emailmock-pill">CONCEPT PREVIEW — clicking opens your email program with this draft ready</div>
+    <div class="emailmock-row"><div class="emailmock-label">To</div><div class="emailmock-val" id="em_to">—</div></div>
+    <div class="emailmock-row"><div class="emailmock-label">From</div><div class="emailmock-val">designer@officerevolution.com</div></div>
+    <div class="emailmock-row"><div class="emailmock-label">Subject</div><div class="emailmock-val" id="em_sub">—</div></div>
+    <div class="emailmock-body" id="em_body">—</div>
+    <div class="emailmock-foot">
+      <button class="btn sm clay" onclick="closeEmailMock()">Got it</button>
+      <span style="font-size:12px;color:var(--muted)">In the live system the subject and body are pre-filled automatically — designer just adds the project name and sends.</span>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><span class="tick">✓</span><span id="toastmsg"></span></div>
+
+<!-- Notes panel (review/feedback) -->
+<button class="nbtn" id="nbtn" onclick="openNotes()" title="Add notes as you review">
+  📝 Notes <span class="nct zero" id="nct">0</span>
+</button>
+<div class="noverlay" id="noverlay" onclick="closeNotes()"></div>
+<div class="npanel" id="npanel">
+  <div class="nhead">
+    <h3>Your notes</h3>
+    <button class="nclose" onclick="closeNotes()" aria-label="Close">×</button>
+  </div>
+  <div class="nintro">
+    Add notes per section as you review. When you're done, hit <b>Send to Andy</b> — it opens your email program with everything filled in.
+  </div>
+  <div class="nbody">
+    <div class="nname">
+      <label for="n_name">Your name (so Andy knows who it's from)</label>
+      <input id="n_name" type="text" placeholder="e.g. Anne" oninput="saveNotes()">
+    </div>
+    <div class="nwhich"><span class="dot"></span><span>Notes on: <span id="n_which">—</span></span></div>
+    <textarea class="nta" id="n_ta" placeholder="Anything you'd like to flag — questions, pushback, things to change, things you like. No format required." oninput="saveNotes()"></textarea>
+    <div class="nother" id="n_other" style="display:none">
+      <div class="nother-h">Notes on other sections (click to jump)</div>
+      <div id="n_other_list"></div>
+    </div>
+  </div>
+  <div class="nfoot">
+    <button class="nsend" id="n_send" onclick="sendNotes()">Send to Andy</button>
+    <button class="ncopy" onclick="copyNotes()">Copy instead</button>
+  </div>
+</div>
+
+<script>
+let RAW = [];
+const CATS=["Task & Desk Seating","Lounge & Soft Seating","Conference & Training Tables","Workstations & Benching","Private Office","Height-Adjustable Desks","Storage & Filing","Architectural Walls","Acoustic Solutions","Tables & Occasional","Outdoor","Ancillary","Textiles & Finishes","Lighting"];
+const MARKETS=["Corporate","Healthcare","Senior Living","Education"];
+const REGIONS=["IL","OH","NC"];                 // real, from the Vendor Sheet
+const OH_CITIES=["Cleveland","Columbus"];       // Ohio is tracked at metro level
+const REGNAME={IL:"Illinois",OH:"Ohio",NC:"North Carolina"};
+const TIERS=["Good","Better","Best"];
+
+// ---- helpers for derived fields ----
+const TODAY = new Date(2026,4,28);  // fixed "today" for deterministic dates
+const ERGO_HINTS=["humanscale","bodybilt","bodybuilt","om smart","via seating","allseating","9 to 5","9to5","cramer","eurotech","ergocentric","ergo concepts","lifeflo ergo","flokk","steelcase","herman miller","okamura"];
+function deriveErgo(r){
+  const hay=(r.n||"").toLowerCase();
+  if(ERGO_HINTS.some(h=>hay.includes(h))) return true;
+  const disc=(r.disc||"").toLowerCase();
+  if(disc.includes("ergonomic")) return true;   // e.g. Humanscale discount text mentions ergonomic products
+  return false;
+}
+function deriveCity(r){
+  if(!r.rg||!r.rg.includes("OH")) return "";
+  // pull first area code from any contact phone
+  for(const c of (r.ct||[])){
+    const m=(c.p||"").match(/(\d{3})/);
+    if(m){
+      const a=m[1];
+      if(a==="614"||a==="380") return "Columbus";
+      if(a==="216"||a==="440"||a==="330"||a==="234") return "Cleveland";
+    }
+  }
+  return "";  // OH vendor, city unknown
+}
+function seededDays(i,enriched){
+  const r=((i*2654435761)>>>0)%10000/10000;   // deterministic 0..1
+  return enriched ? Math.floor(20+r*150) : Math.floor(200+r*400);
+}
+function normName(s){return (s||"").toLowerCase().replace(/[^a-z0-9]/g,"");}
+function domainRoot(d){return (d||"").split(".")[0].replace(/[^a-z0-9]/gi,"").toLowerCase();}
+function isOwnDomain(name,site){
+  if(!site) return true;
+  const nn=normName(name), dr=domainRoot(site);
+  if(!dr) return true;
+  return nn.includes(dr.slice(0,5)) || dr.includes(nn.slice(0,5));
+}
+
+let VENDORS = [];
+function rebuildVendors(){ VENDORS = RAW.map((r,i)=>{
+  // Outdoor is now treated as a category (not a target market) — fold the flag into cats
+  const cats=[...(r.cat||[])];
+  if(r.out && !cats.includes("Outdoor")) cats.push("Outdoor");
+  // showroom contact (if any contact carries the Showroom role)
+  const showCt=(r.ct||[]).find(c=>(c.r||"").toLowerCase()==="showroom");
+  const days=seededDays(i,!!r.en);
+  const upd=new Date(TODAY.getTime()-days*86400000);
+  // rep domain: the site is a rep/showroom group's domain only when it isn't the vendor's own
+  const repDomain=(r.st && !isOwnDomain(r.n,r.st)) ? r.st : "";
+  return {
+  id:"V-"+String(i+1).padStart(4,"0"),
+  name:r.n, regions:r.rg, site:r.st, caution:!!r.ca,
+  contacts:(r.ct||[]).map(c=>({t:c.r||"Contact",n:c.n,e:c.e,p:c.p})),
+  enriched:!!r.en, cats, tier:r.tier||"", lead:r.lead||null, war:r.war||null,
+  // NEW operational fields from the live data source
+  sif:r.sif||"", disc:r.disc||"", frt:r.frt||"",
+  qs:!!r.qs, spiff:!!r.spiff, spiffUrl:r.spiffUrl||"",
+  out:!!r.out, edu:!!r.edu, sl:!!r.sl, hc:false, corp:false,    // markets (hc/corp not in CSV; vendor-supplied via intake)
+  ergo:deriveErgo(r),                                            // ergonomics attribute
+  city:deriveCity(r),                                            // OH city (Cleveland/Columbus) when known
+  updated:upd, updatedDays:days,                                 // last-confirmed date
+  showroom: showCt ? {n:showCt.n,e:showCt.e,p:showCt.p} : null,  // showroom contact when supplied
+  showHours:"", showLoc:"",                                      // hours/location — intake-supplied
+  repDomain,
+  typ:r.typ||"",
+  portal:r.portal||"", mats:r.mats||"", pl:r.pl||"", cad:r.cad||"",
+  warr:r.warr||"", clm:r.clm||"",
+  com:r.com||"", pcon:r.pcon||"", pinc:r.pinc||"",
+  docs:r.en?[{n:r.n+" Price Book 2026",t:"Price Book · vendor-supplied"},{n:r.n+" Finish Library",t:"Finishes · vendor-supplied"}]:[]
+  };
+}); };
+
+// Rep / showroom groups — vendors that share a rep-group domain (one rep handles many lines)
+const REPGROUPS=(()=>{
+  const m={};
+  VENDORS.forEach(v=>{ if(v.repDomain){ (m[v.repDomain]=m[v.repDomain]||[]).push(v.name); } });
+  Object.keys(m).forEach(k=>{ if(m[k].length<2) delete m[k]; });  // only real groups
+  return m;
+})();
+function repSiblings(v){
+  if(!v.repDomain || !REPGROUPS[v.repDomain]) return [];
+  return REPGROUPS[v.repDomain].filter(n=>n!==v.name);
+}
+
+const STATS=(()=>{
+  const t=VENDORS.length;
+  return {total:t,
+    en:VENDORS.filter(v=>v.enriched).length,
+    noCat:VENDORS.filter(v=>v.cats.length===0).length,
+    noContact:VENDORS.filter(v=>!v.contacts.length).length,
+    noPricebook:VENDORS.filter(v=>!v.pl && !v.docs.length).length,
+    caut:VENDORS.filter(v=>v.caution).length,
+    qs:VENDORS.filter(v=>v.qs).length,
+    spiff:VENDORS.filter(v=>v.spiff).length,
+    out:VENDORS.filter(v=>v.out).length,
+    ergo:VENDORS.filter(v=>v.ergo).length};
+})();
+
+let SUBMISSIONS=[];
+let APPROVER="Andy (BD)";
+const STATE={view:"concept",filters:{q:"",cat:"",region:"",city:"",tier:"",comp:"all",qs:false,spiff:false,out:false,ergo:false,updated:""},cart:[]};
+const $=s=>document.querySelector(s);
+const stage=$("#stage");
+function toast(m){const t=$("#toast");$("#toastmsg").textContent=m;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),3600);}
+function setView(v){STATE.view=v;document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("active",b.dataset.v===v));render();window.scrollTo({top:0});}
+document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>setView(b.dataset.v));
+$("#pulldate").textContent=new Date().toLocaleDateString();
+
+function completeness(v){
+  const c={Contact:v.contacts.length>0,Category:v.cats.length>0,"Lead time":!!v.lead,Warranty:!!v.war,"Price book":v.docs.length>0};
+  const score=Object.values(c).filter(Boolean).length;
+  return {c,score};
+}
+function meter(v){
+  const {c,score}=completeness(v);
+  return `<div class="meter">${Object.values(c).map(f=>`<div class="seg5 ${f?'f':'x'}"></div>`).join("")}</div>
+  <div class="complete-lab"><span>${score}/5 fields populated</span><span>${score===5?'Complete':score<=1?'Needs data':'Partial'}</span></div>`;
+}
+
+function viewConcept(){
+  return `
+  <div class="eyebrow">Concept · Built on our live Vendor Sheet</div>
+  <h1>This is our vendor database today.</h1>
+  <p class="lede">Not a mock-up — these ${STATS.total} vendors came straight from our current sources.
+  The contact info is there. What's not in one place is the operational side designers need to spec —
+  category, price book, lead time, quick-ship status. Those pieces live across separate documents
+  and spreadsheets. The data exists. It's just scattered, and not always current. So designers spend
+  time hunting instead of specifying.</p>
+
+  <div class="statband">
+    <div class="st"><div class="big">${STATS.total}</div><div class="lab">vendors across IL, OH &amp; NC</div></div>
+    <div class="st"><div class="big bad">${STATS.noCat}</div><div class="lab">have <b>no category</b> — so search can't surface them by what they make</div></div>
+    <div class="st"><div class="big bad">${STATS.noPricebook}</div><div class="lab">have <b>no current price book</b> linked in our system</div></div>
+    <div class="st"><div class="big bad">${STATS.caut}</div><div class="lab">“do not order” warnings buried in free-text notes, easy to miss</div></div>
+  </div>
+  <p class="lede" style="margin-top:22px">Today, a designer searching this gets a name and maybe an email.
+  For lead time, price point, current price book, category — they're picking up the phone or working
+  from memory. It gets the job done. It just takes longer than it should, and on a tight spec, that
+  time adds up.</p>
+
+  <div class="rule"></div>
+  <h2>The workflow that fixes it</h2>
+  <div class="flow" style="margin-top:22px">
+    <div class="step"><div class="badge">01 — Vendor submits</div><h3>They fill the gaps themselves</h3>
+      <p>Each vendor confirms categories, contacts, lead times, warranties and uploads a current price book. The incentive is direct: better data, more of their product specified.</p><div class="arrow">→</div></div>
+    <div class="step"><div class="badge">02 — We approve</div><h3>You or I sign off</h3>
+      <p>Every submission lands in a review queue. Either approver releases it or sends it back. Nothing reaches designers unreviewed.</p><div class="arrow">→</div></div>
+    <div class="step"><div class="badge">03 — Designers search</div><h3>Complete record, in seconds</h3>
+      <p>Filter by category, region and price. Open a vendor: verified contacts and the current price book — instead of a name and a guess.</p></div>
+  </div>
+
+  <div class="rule"></div>
+  <div class="grid2">
+    <div class="panel"><h3><span class="dot"></span>What v1 unlocks</h3>
+      <ul>
+        <li>Vendor self-service intake — the people who know the data maintain it</li>
+        <li>Dual approval — either you or I can release a record</li>
+        <li>Designer search by category, region &amp; price on clean data</li>
+        <li>Annual refresh email so it never decays back to this state</li>
+      </ul></div>
+    <div class="panel dark"><h3 style="color:var(--paper)"><span class="dot" style="background:var(--gold)"></span>Built so it can grow</h3>
+      <ul>
+        <li>Categories vendors recognize on the surface, mapped to a clean taxonomy underneath — ready to feed any tool we build later without rework</li>
+        <li>Normalized schema — approved vendors can flow into other systems (project budgeting, spec tools, anything that needs clean vendor data) with one join</li>
+        <li>Google Sheets now, zero new cost; a real database later when volume demands it — no rebuild</li>
+      </ul>
+      <p class="sub" style="font-size:12.5px;margin-top:18px;line-height:1.6">The legacy sheet seeds it on day one — no re-keying ${STATS.total} vendors.</p></div>
+  </div>
+
+  <div class="rule"></div>
+  <h2>The payoff — in numbers</h2>
+  <p class="lede" style="margin-top:10px;max-width:62ch">Three metrics tell the story: time we get back, cost we don't pay, and ramp-up time we don't lose. Assumptions are visible — push back on any of them.</p>
+  <div class="roi" style="margin-top:24px">
+    <div class="metric">
+      <div class="big">~2,300<span class="unit">hrs / yr</span></div>
+      <div class="lab">Designer hours recaptured</div>
+      <div class="basis">20 min/day saved per designer on vendor lookups<br>× 30 designers × 230 working days</div>
+      <div class="dollar">≈ $172K / yr <span class="dollar-sub">at $75/hr fully-loaded</span></div>
+      <div class="range">Conservative range: 1,725 – 3,450 hrs ($130K – $260K)</div>
+    </div>
+    <div class="metric">
+      <div class="big">~$19.5K<span class="unit">/ yr</span></div>
+      <div class="lab">Avoided Airtable Enterprise license</div>
+      <div class="basis">30 designer seats × ~$54/user/month<br>(Business list is $45; Enterprise is custom-quoted, typically higher)</div>
+      <div class="dollar">Based on 30 seats</div>
+      <div class="range">Range: $16K (Business list) – $25K (Enterprise mid)</div>
+    </div>
+    <div class="metric clay">
+      <div class="big">~$10–15K<span class="unit">per ramp-up<br>at fully-loaded cost</span></div>
+      <div class="lab">New designer / role-transition ramp-up</div>
+      <div class="basis">Learning the vendor landscape — who to call, their discount, where the current price book lives, who quick-ships — is a real part of any new designer's ramp-up. A single source of truth turns that into a quick lookup. Same applies when an existing designer moves regions or takes on a new client type.</div>
+      <div class="dollar">Order of magnitude<span class="dollar-sub">happy to refine these numbers against what ramp-up actually looks like today</span></div>
+      <div class="range">Even one ramp-up a year and the math works</div>
+    </div>
+  </div>
+  <div class="combined">
+    <div><span class="ckey">Combined Year 1 value</span> = recaptured time + avoided platform cost + ramp-up time saved</div>
+    <div class="cval"><b>~$200K+ / yr</b> · build cost: zero new tools, ~30 hours of my time, runs on Google Sheets</div>
+  </div>
+
+  <div class="demonote">Live demo: go to <b>Designer Search</b> and show the real data — switch to “Needs data” to show what's missing today. Then submit <b>Tacchini</b> in <b>Vendor Intake</b>, approve it, and watch that exact real vendor flip from incomplete to complete in search. Before → after, on her own data.</div>
+  <div style="margin-top:28px;display:flex;gap:12px">
+    <button class="btn clay" onclick="setView('search')">See the real database →</button>
+    <button class="btn ghost" onclick="setView('intake')">Start the fix loop</button></div>
+
+  <div class="attrib">
+    <b>Andy Svalesen</b> · <a href="mailto:asvalesen@office-revolution.com">asvalesen@office-revolution.com</a><br>
+    <em>Questions about this — or anything else — just reach out.</em>
+  </div>`;
+}
+
+let intakeSel=new Set(),intakeMkt=new Set(),intakeFiles=[];
+function viewIntake(){
+  const candidates=VENDORS.filter(v=>!v.enriched).map(v=>v.name);
+  setTimeout(bindIntake,0);
+  return `
+  <div class="eyebrow">Stage 01 · Vendor-facing</div>
+  <h1>Vendor intake</h1>
+  <p class="lede">What a vendor sees. They pick an existing record (or add new), fill what’s missing, and upload
+  price books. On submit it enters the approval queue — the live database is untouched until release.</p>
+  <div class="formcard" style="margin-top:30px">
+    <div class="field"><label class="f">Vendor (real records from our sheet — type to search)</label>
+      <input class="f" id="i_name" list="vlist" placeholder="e.g. Tacchini" value="Tacchini">
+      <datalist id="vlist">${candidates.slice(0,400).map(n=>`<option value="${n.replace(/"/g,'&quot;')}">`).join("")}</datalist></div>
+    <div class="row">
+      <div class="field"><label class="f">Website</label><input class="f" id="i_site" placeholder="company.com"></div>
+      <div class="field"><label class="f">Primary region served</label>
+        <select class="f" id="i_region">${REGIONS.map(r=>`<option value="${r}">${REGNAME[r]} (${r})</option>`).join("")}</select></div>
+    </div>
+    <div class="field"><label class="f">Categories manufactured <span style="color:var(--clay);text-transform:none;letter-spacing:0">— the field designers most need</span></label>
+      <div class="chips" id="i_cats">${CATS.map(c=>`<div class="chip" data-c="${c}">${c}</div>`).join("")}</div></div>
+
+    <div class="field"><label class="f">Target markets <span style="color:var(--clay);text-transform:none;letter-spacing:0">— check all that apply</span></label>
+      <div class="chips" id="i_markets">${MARKETS.map(m=>`<div class="chip" data-m="${m}">${m}</div>`).join("")}</div></div>
+
+    <div class="field"><label class="f">Ergonomic-forward line?</label>
+      <div class="yn"><button type="button" class="yn-btn" data-yn="ergo" data-v="1" onclick="ynPick(this)">Yes</button><button type="button" class="yn-btn on" data-yn="ergo" data-v="0" onclick="ynPick(this)">No</button></div>
+      <div class="fhelp" style="margin-top:10px">Check yes if ergonomics is a core selling point (task seating, sit-stand, etc.). Designers filter by this for workplace-health specs.</div>
+    </div>
+
+    <div class="section-divide">Pricing &amp; programs</div>
+
+    <div class="row">
+      <div class="field"><label class="f">Discount off list</label>
+        <input class="f" id="i_disc" placeholder='e.g. "50/10 - 55%" or "Request Quote"'>
+        <div class="fhelp">Free text — your structure (stacked discounts, project tiers, net pricing, request-quote).</div>
+      </div>
+      <div class="field"><label class="f">Freight terms</label>
+        <input class="f" id="i_frt" placeholder="e.g. Included over $8K; otherwise $150 flat">
+        <div class="fhelp">When freight kicks in, who pays, any minimums.</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field"><label class="f">SPIFF program available?</label>
+        <div class="yn"><button type="button" class="yn-btn" data-yn="spiff" data-v="1" onclick="ynPick(this)">Yes</button><button type="button" class="yn-btn on" data-yn="spiff" data-v="0" onclick="ynPick(this)">No</button></div>
+        <input class="f" id="i_spiffUrl" placeholder="Sign-up link (URL) — or attach a PDF below" style="margin-top:10px;font-size:13px">
+        <div class="spiffpdf">
+          <button type="button" class="btn ghost sm" onclick="attachSpiffPdf()" id="spiffBtn">📎 Or attach PDF</button>
+          <span id="spiffPdfChip" style="font-size:12px;color:var(--muted)"></span>
+        </div>
+        <div class="fhelp">If yes, paste a link <i>or</i> attach a PDF where our designers can sign up for your rep program.</div>
+      </div>
+      <div class="field"><label class="f">Quick Ship available?</label>
+        <div class="yn"><button type="button" class="yn-btn" data-yn="qs" data-v="1" onclick="ynPick(this)">Yes</button><button type="button" class="yn-btn on" data-yn="qs" data-v="0" onclick="ynPick(this)">No</button></div>
+        <div class="fhelp" style="margin-top:10px">Designers will filter by this when projects need fast turnaround.</div>
+      </div>
+    </div>
+
+    <div class="field leadtime-block">
+      <label class="f">Lead time <span class="fhint">— we expect this to change. That's fine.</span></label>
+      <label class="lt-quoted"><input type="checkbox" id="i_leadQuoted" onchange="toggleLeadQuoted()"> <span>Lead times are always quoted per project</span> <span class="lt-quoted-help">(check this and skip the rest)</span></label>
+      <div id="i_leadDetails" class="lt-details">
+        <div class="lt-row">
+          <div class="lt-col">
+            <label class="lt-sub">Typical lead time</label>
+            <div class="lt-inline"><input class="f" id="i_lead" type="number" placeholder="10" style="max-width:90px"> <span class="lt-unit">weeks</span></div>
+          </div>
+          <div class="lt-col lt-col-grow">
+            <label class="lt-sub">Or paste a current schedule</label>
+            <input class="f" id="i_leadurl" placeholder="https://… or attach a PDF below">
+          </div>
+        </div>
+        <div class="lt-row">
+          <div class="lt-col lt-col-grow">
+            <label class="lt-sub">How often does this change?</label>
+            <select class="f" id="i_leadFreq">
+              <option value="">— select —</option>
+              <option value="stable">Stable — rarely changes</option>
+              <option value="monthly">Updated monthly</option>
+              <option value="weekly">Changes weekly lately</option>
+              <option value="per-project">Per-project only</option>
+            </select>
+            <div class="fhelp" style="margin-top:6px">We'll use this to schedule a refresh nudge — so you're not asked again until it might actually matter.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field"><label class="f">Warranty</label>
+        <input class="f" id="i_warr" type="number" placeholder="Years (e.g. 5)">
+        <input class="f" id="i_warrurl" placeholder="…or paste a link to your warranty page" style="margin-top:8px;font-size:13px">
+        <div class="fhelp">Warranty terms vary by product line. Paste a link, upload a PDF, or give us your standard.</div>
+      </div>
+      <div class="field"><label class="f">Price point</label>
+        <select class="f" id="i_tier">${TIERS.map(t=>`<option>${t}</option>`).join("")}</select>
+        <div class="fhelp">Good / Better / Best — how designers think about specifying your line.</div>
+      </div>
+    </div>
+
+    <div class="section-divide">Resource links <span class="dvhelp">— where designers actually need to go</span></div>
+    <div class="row">
+      <div class="field"><label class="f">Price list URL</label><input class="f" id="i_pl" placeholder="https://…"></div>
+      <div class="field"><label class="f">Materials &amp; finishes URL</label><input class="f" id="i_mats" placeholder="https://…"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label class="f">Warranty &amp; care URL</label><input class="f" id="i_warrres" placeholder="https://…"></div>
+      <div class="field"><label class="f">Claims process URL</label><input class="f" id="i_clm" placeholder="https://…"></div>
+    </div>
+    <div class="field"><label class="f">Dealer portal login</label><input class="f" id="i_portal" placeholder="https://…"></div>
+    <div class="field"><label class="f">COM ship-to address</label>
+      <textarea class="f" id="i_com" placeholder="Where designers ship customer-supplied fabric for COM testing"></textarea>
+      <div class="fhelp">Multi-line OK. Include any RA# requirements or attention lines.</div>
+    </div>
+
+    <div class="section-divide">Showroom <span class="dvhelp">— if you have one designers can visit</span></div>
+    <div class="row">
+      <div class="field"><label class="f">Showroom contact</label><input class="f" id="i_shn" placeholder="Name or front desk"></div>
+      <div class="field"><label class="f">Showroom phone / email</label><input class="f" id="i_shp" placeholder="Phone or email"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label class="f">Showroom location</label><input class="f" id="i_shloc" placeholder="e.g. Chicago Mart, Suite 1234"></div>
+      <div class="field"><label class="f">Hours</label><input class="f" id="i_shhrs" placeholder="e.g. Mon–Fri 9–5, or by appointment"></div>
+    </div>
+
+    <div class="section-divide">Contacts &amp; documents</div>
+    <div class="field"><label class="f">Primary sales contact</label>
+      <div class="row"><input class="f" id="i_cn" placeholder="Contact name"><input class="f" id="i_ce" placeholder="email@company.com"></div></div>
+    <div class="field"><label class="f">Other lines this rep represents <span style="color:var(--clay);text-transform:none;letter-spacing:0">— optional</span></label>
+      <input class="f" id="i_rep" placeholder="e.g. Allermuir, Senator, Surface Works">
+      <div class="fhelp">If the same rep or showroom handles other manufacturers, list them — we'll group them so one contact can cover multiple lines.</div>
+    </div>
+    <div class="field"><label class="f">Price books &amp; finish PDFs</label>
+      <div class="uploadbox" id="i_drop"><b>Click to attach PDFs</b><br>Stored &amp; downloadable. No full-text search in v1.</div>
+      <div id="i_files"></div></div>
+    <div class="field"><label class="f">Notes for our team</label>
+      <textarea class="f" id="i_note" placeholder="New lines, programs, anything we should know…"></textarea></div>
+    <div style="display:flex;gap:12px;align-items:center;margin-top:4px">
+      <button class="btn clay" onclick="submitIntake()">Submit for review</button>
+      <span style="font-size:12.5px;color:var(--muted)">Enters the approval queue — not live until released.</span>
+    </div>
+  </div>
+  <div class="demonote">Demo tip: leave it on <b>Tacchini</b> and just hit submit — it pre-fills realistic data so the loop keeps moving. Tacchini is a real record in our sheet with no category today; you’ll see it go complete after approval.</div>`;
+}
+function bindIntake(){
+  intakeSel=new Set();intakeMkt=new Set();intakeFiles=[];
+  document.querySelectorAll("#i_cats .chip").forEach(c=>c.onclick=()=>{c.classList.toggle("on");c.classList.contains("on")?intakeSel.add(c.dataset.c):intakeSel.delete(c.dataset.c);});
+  document.querySelectorAll("#i_markets .chip").forEach(c=>c.onclick=()=>{c.classList.toggle("on");c.classList.contains("on")?intakeMkt.add(c.dataset.m):intakeMkt.delete(c.dataset.m);});
+  $("#i_drop").onclick=()=>{const f=["Price Book 2026.pdf","Finish Library.pdf","Spec Sheets.pdf"][intakeFiles.length%3];if(intakeFiles.length<3){intakeFiles.push(f);renderFiles();}};
+}
+function ynPick(btn){
+  const grp=btn.dataset.yn;
+  document.querySelectorAll('.yn-btn[data-yn="'+grp+'"]').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+function attachSpiffPdf(){
+  const chip=document.getElementById('spiffPdfChip');
+  if(!chip) return;
+  if(chip.dataset.attached){
+    chip.textContent='';chip.removeAttribute('data-attached');
+    document.getElementById('spiffBtn').textContent='📎 Or attach PDF';
+  } else {
+    chip.innerHTML='<span class="filechip" style="margin-left:8px">📄 SPIFF_signup.pdf <span class="x" onclick="attachSpiffPdf()">×</span></span>';
+    chip.dataset.attached='1';
+    document.getElementById('spiffBtn').textContent='📎 PDF attached';
+  }
+}
+function toggleLeadQuoted(){
+  const cb=document.getElementById('i_leadQuoted');
+  const det=document.getElementById('i_leadDetails');
+  if(!cb||!det) return;
+  det.classList.toggle('dim',cb.checked);
+}
+function renderFiles(){$("#i_files").innerHTML=intakeFiles.map((f,i)=>`<span class="filechip">📄 ${f}<span class="x" onclick="intakeFiles.splice(${i},1);renderFiles()">×</span></span>`).join("");}
+function submitIntake(){
+  const name=($("#i_name").value.trim())||"Tacchini";
+  const ex=VENDORS.find(v=>v.name.toLowerCase()===name.toLowerCase());
+  const cats=intakeSel.size?[...intakeSel]:["Lounge & Soft Seating","Tables & Occasional","Conference & Training Tables"];
+  const docs=intakeFiles.length?intakeFiles.slice():["Tacchini Price Book 2026.pdf","Tacchini Material Finishes.pdf"];
+  const ynOn=g=>document.querySelector('.yn-btn[data-yn="'+g+'"].on')?.dataset.v==='1';
+  const s={id:"S-"+String(SUBMISSIONS.length+1).padStart(4,"0"),
+    mode:ex?"Update Existing — fills gaps":"New Vendor",
+    name,site:$("#i_site").value.trim()||(ex&&ex.site)||(name.toLowerCase().replace(/[^a-z0-9]/g,"")+".com"),
+    region:$("#i_region").value,tier:$("#i_tier").value,
+    lead:+$("#i_lead").value||10,warranty:+$("#i_warr").value||5,cats,
+    markets:[...intakeMkt], ergo:ynOn("ergo"), qs:ynOn("qs"), spiff:ynOn("spiff"),
+    shn:$("#i_shn")?.value.trim()||"", shp:$("#i_shp")?.value.trim()||"", shloc:$("#i_shloc")?.value.trim()||"", shhrs:$("#i_shhrs")?.value.trim()||"",
+    rep:$("#i_rep")?.value.trim()||"",
+    by:($("#i_ce").value.trim()||"contract@"+(ex&&ex.site||"vendor.com")),when:"just now",
+    note:$("#i_note").value.trim()||"Submitted via vendor self-service intake.",docs,status:"Submitted",
+    wasIncomplete:ex?!ex.enriched:true};
+  SUBMISSIONS.unshift(s);
+  toast(`Submitted — “${name}” is in the approval queue`);
+  setTimeout(()=>setView("approve"),850);
+}
+
+function viewApprove(){
+  const pending=SUBMISSIONS.filter(s=>s.status==="Submitted");
+  const body=pending.length?pending.map(s=>`
+    <div class="subcard">
+      <div class="top"><div><h3>${s.name}</h3><div class="meta">${s.id} · ${s.by} · ${s.when}</div></div>
+        <div style="text-align:right"><span class="badge-pill ${s.mode.startsWith('New')?'b-sub':'b-chg'}">${s.mode}</span>
+        <div style="margin-top:8px"><span class="badge-pill b-sub">Awaiting review</span></div></div></div>
+      <div class="kv">
+        <div><div class="k">Region</div><div class="v">${REGNAME[s.region]||s.region}</div></div>
+        <div><div class="k">Price point</div><div class="v"><span class="badge-pill b-tier">${s.tier}</span></div></div>
+        <div><div class="k">Lead time</div><div class="v">${s.lead} wks</div></div>
+        <div><div class="k">Warranty</div><div class="v">${s.warranty} yrs</div></div></div>
+      <div style="font-size:13px;color:var(--muted);margin:6px 0"><b style="color:var(--ink)">Categories:</b> ${s.cats.join(" · ")}</div>
+      <div style="font-size:13px;color:var(--muted);margin:8px 0"><b style="color:var(--ink)">Files:</b> ${s.docs.map(d=>`📄 ${d}`).join("&nbsp;&nbsp;")}</div>
+      ${s.wasIncomplete?`<div style="font-size:12.5px;color:var(--ok);background:var(--ok-soft);border-radius:8px;padding:9px 12px;margin-top:8px">This record currently has no category/lead/warranty in our sheet — approving fills all of it.</div>`:""}
+      <div style="font-size:13.5px;line-height:1.55;background:var(--paper-2);border:1px solid var(--line);border-radius:9px;padding:13px 15px;margin-top:10px"><b>Vendor note:</b> ${s.note}</div>
+      <div class="acts">
+        <button class="btn clay sm" onclick="approve('${s.id}')">Approve &amp; publish</button>
+        <button class="btn warn sm" onclick="reqChg('${s.id}')">Request changes</button>
+        <span class="approver-note">Either approver may release · acting as <b>${APPROVER}</b></span></div>
+    </div>`).join(""):`<div class="emptyq"><div class="big">Queue clear</div>
+      Submissions land here for you or the design director to release.<br><br>
+      <button class="btn ghost sm" onclick="setView('intake')">Submit a real vendor →</button></div>`;
+  return `
+  <div class="eyebrow">Stage 02 · Internal — dual approval</div>
+  <h1>Review &amp; approve</h1>
+  <p class="lede">Every submission stops here. Either you or the design director releases it to designers or sends
+  it back. Approved data flows straight into search; nothing else does.</p>
+  <div style="display:flex;gap:10px;align-items:center;margin:24px 0 4px">
+    <span style="font-size:12.5px;color:var(--muted)">Acting as:</span>
+    <button class="btn ghost sm" onclick="APPROVER='Andy (BD)';render()" style="${APPROVER==='Andy (BD)'?'background:var(--ink);color:var(--paper);border-color:var(--ink)':''}">Andy (BD)</button>
+    <button class="btn ghost sm" onclick="APPROVER='Design Director';render()" style="${APPROVER==='Design Director'?'background:var(--ink);color:var(--paper);border-color:var(--ink)':''}">Design Director</button>
+  </div>
+  <div class="queue">${body}</div>
+  <div class="demonote">In the real build each action emails the other approver and stamps who released it. Here it updates live so you can walk the full loop.</div>`;
+}
+function approve(id){
+  const s=SUBMISSIONS.find(x=>x.id===id);if(!s)return;
+  s.status="Approved";
+  let v=VENDORS.find(x=>x.name.toLowerCase()===s.name.toLowerCase());
+  if(!v){v={id:"V-"+String(VENDORS.length+1).padStart(4,"0"),name:s.name,regions:[s.region],site:s.site,caution:false,contacts:[]};VENDORS.unshift(v);}
+  v.enriched=true;v.cats=s.cats;v.tier=s.tier;v.lead=s.lead;v.war=s.warranty;
+  if(!v.regions.includes(s.region))v.regions.push(s.region);
+  if(s.ergo) v.ergo=true;
+  if(s.qs) v.qs=true;
+  if(s.spiff) v.spiff=true;
+  if(s.markets){ if(s.markets.includes("Corporate"))v.corp=true; if(s.markets.includes("Healthcare"))v.hc=true; if(s.markets.includes("Education"))v.edu=true; if(s.markets.includes("Senior Living"))v.sl=true; }
+  if(s.shn||s.shp||s.shloc||s.shhrs){ v.showroom={n:s.shn,e:/@/.test(s.shp)?s.shp:"",p:/@/.test(s.shp)?"":s.shp}; v.showLoc=s.shloc; v.showHours=s.shhrs; }
+  if(s.rep){ /* note other lines in the record */ v.repNote=s.rep; }
+  v.updated=new Date(); v.updatedDays=0;   // freshly confirmed
+  v.docs=s.docs.map(d=>({n:d.replace(/\.pdf$/i,""),t:"Uploaded · vendor-supplied"}));
+  if(s.by) v.contacts.unshift({t:"Sales Rep",n:s.by.split("@")[0],e:s.by,p:"added on intake"});
+  toast(`Approved by ${APPROVER} — “${s.name}” is now complete in search`);
+  render();
+}
+function reqChg(id){const s=SUBMISSIONS.find(x=>x.id===id);if(s){s.status="Changes Requested";toast(`Sent back to ${s.name} (${APPROVER})`);render();}}
+
+// ---- last-updated + cart helpers ----
+function agoLabel(days){
+  if(days<=7) return "this week";
+  if(days<14) return "last week";
+  if(days<60) return Math.round(days/7)+" weeks ago";
+  if(days<365) return Math.round(days/30)+" months ago";
+  return "over a year ago";
+}
+function toggleCart(id){
+  const i=STATE.cart.indexOf(id);
+  if(i>=0) STATE.cart.splice(i,1); else STATE.cart.push(id);
+  render();
+  // if the drawer is open on this vendor, refresh it so its button updates
+  const dr=document.getElementById("drawer");
+  if(dr&&dr.classList.contains("show")) openVendor(id);
+}
+function emailCreated(id){ EMAILED.add(id); render(); }
+const EMAILED=new Set();
+
+function viewSearch(){
+  const f=STATE.filters;
+  let res=VENDORS.filter(v=>{
+    if(f.q){const q=f.q.toLowerCase();if(!(v.name.toLowerCase().includes(q)||v.cats.join(" ").toLowerCase().includes(q)))return false;}
+    if(f.region&&!v.regions.includes(f.region))return false;
+    if(f.city&&v.city!==f.city)return false;
+    if(f.cat&&!v.cats.includes(f.cat))return false;
+    if(f.tier&&v.tier!==f.tier)return false;
+    if(f.qs&&!v.qs)return false;
+    if(f.spiff&&!v.spiff)return false;
+    if(f.out&&!v.out)return false;
+    if(f.ergo&&!v.ergo)return false;
+    if(f.updated){const max=parseInt(f.updated,10);if(v.updatedDays>max)return false;}
+    if(f.comp==="en"&&!v.enriched)return false;
+    if(f.comp==="need"&&v.enriched)return false;
+    return true;
+  });
+  res=res.sort((a,b)=>(b.enriched-a.enriched)||a.name.localeCompare(b.name));
+  const shown=res.slice(0,120);
+  const cards=shown.length?shown.map(v=>{
+    const marketBadges=[v.corp&&'Corporate',v.hc&&'Healthcare',v.edu&&'Edu',v.sl&&'Sr Living'].filter(Boolean);
+    const inC=STATE.cart.includes(v.id);
+    return `<div class="vcard ${v.caution?'caut':''}" onclick='openVendor("${v.id}")'>
+      <div class="vh"><div><h3>${v.name}</h3>
+        <div class="reg">${v.regions.map(r=>`<span class="badge-pill b-reg">${r}${v.city&&r==='OH'?' · '+v.city:''}</span>`).join("")}<span style="margin-left:4px">${v.site||""}</span></div></div>
+        <div style="text-align:right;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+          ${v.enriched?`<span class="badge-pill b-en">✓ Enriched</span>`:`<span class="badge-pill b-leg">Legacy</span>`}
+          ${v.caution?`<span class="badge-pill b-caut">⚠ Caution</span>`:v.tier?`<span class="badge-pill b-tier">${v.tier}</span>`:""}
+        </div></div>
+      <div class="capbar">
+        ${v.qs?'<span class="cap cap-qs">⚡ Quick Ship</span>':''}
+        ${v.spiff?'<span class="cap cap-spiff">💰 SPIFF</span>':''}
+        ${v.ergo?'<span class="cap cap-ergo">🧍 Ergonomic</span>':''}
+        ${marketBadges.map(m=>`<span class="cap cap-mkt">${m}</span>`).join('')}
+      </div>
+      <div class="cats">${v.cats.length?v.cats.slice(0,3).map(c=>`<span class="cat">${c}</span>`).join(""):`<span class="nocat">No category on file yet — enrich to make it searchable</span>`}</div>
+      ${meter(v)}
+      <div class="vcard-foot">
+        <span class="updated-chip" title="Last confirmed ${v.updated.toLocaleDateString()}">Updated ${agoLabel(v.updatedDays)}</span>
+        <button class="addcart ${inC?'in':''}" onclick='event.stopPropagation();toggleCart("${v.id}")'>${inC?'✓ In project':'+ Add to project'}</button>
+      </div>
+    </div>`;}).join(""):`<div class="noresults">No vendors match. Loosen a filter — or this gap is exactly what intake fills.</div>`;
+  setTimeout(bindSearch,0);
+  return `
+  <div class="eyebrow">Stage 03 · Designer-facing · live Vendor Sheet data</div>
+  <h1>Designer search</h1>
+  <p class="lede">Our real ${STATS.total} vendors. Switch the view to <b>“Needs data”</b> to see the problem in one
+  screen, and <b>“Enriched”</b> to see the target state. Region (IL/OH/NC) works on the real data today; category
+  and price only work once a vendor is enriched — which is the entire point.</p>
+  <div class="searchbar" style="margin-top:28px">
+    <div class="grp"><label class="f">Search</label><input class="f" id="s_q" placeholder="Vendor or category…" value="${f.q}"></div>
+    <div class="grp"><label class="f">Category</label><select class="f" id="s_cat"><option value="">All categories</option>${CATS.map(c=>`<option ${f.cat===c?"selected":""}>${c}</option>`).join("")}</select></div>
+    <div class="grp"><label class="f">Region</label><select class="f" id="s_region"><option value="">All regions</option>${REGIONS.map(r=>`<option value="${r}" ${f.region===r?"selected":""}>${REGNAME[r]} (${r})</option>`).join("")}</select></div>
+    ${f.region==='OH'?`<div class="grp"><label class="f">Ohio metro</label><select class="f" id="s_city"><option value="">All of Ohio</option>${OH_CITIES.map(c=>`<option value="${c}" ${f.city===c?"selected":""}>${c}</option>`).join("")}</select></div>`:""}
+    <div class="grp"><label class="f">Price point</label><select class="f" id="s_tier"><option value="">All tiers</option>${TIERS.map(t=>`<option ${f.tier===t?"selected":""}>${t}</option>`).join("")}</select></div>
+    <div class="grp"><label class="f">Last updated</label><select class="f" id="s_updated"><option value="">Any time</option><option value="90" ${f.updated==='90'?'selected':''}>Last 90 days</option><option value="180" ${f.updated==='180'?'selected':''}>Last 6 months</option><option value="365" ${f.updated==='365'?'selected':''}>Last year</option></select></div>
+    <button class="btn ghost sm" style="height:fit-content" onclick="STATE.filters={q:'',cat:'',region:'',city:'',tier:'',comp:'all',qs:false,spiff:false,out:false,ergo:false,updated:''};render()">Clear</button>
+  </div>
+  <div class="togglebar">
+    <span class="toggle-lab">Capabilities:</span>
+    <button class="toggle ${f.qs?'on':''}" onclick="STATE.filters.qs=!STATE.filters.qs;render()">⚡ Quick Ship <span class="toggle-n">${STATS.qs}</span></button>
+    <button class="toggle ${f.spiff?'on':''}" onclick="STATE.filters.spiff=!STATE.filters.spiff;render()">💰 SPIFF available <span class="toggle-n">${STATS.spiff}</span></button>
+    <button class="toggle ${f.ergo?'on':''}" onclick="STATE.filters.ergo=!STATE.filters.ergo;render()">🧍 Ergonomic-forward <span class="toggle-n">${STATS.ergo}</span></button>
+    <button class="toggle ${f.out?'on':''}" onclick="STATE.filters.out=!STATE.filters.out;render()">🌳 Outdoor <span class="toggle-n">${STATS.out}</span></button>
+  </div>
+  ${STATE.cart.length?`<div class="cartbar"><span><b>${STATE.cart.length}</b> vendor${STATE.cart.length>1?'s':''} in your quote project</span><button class="btn clay sm" onclick="setView('cart')">Review &amp; send quote requests →</button></div>`:""}
+  <div class="resulthead">
+    <div class="seg">
+      <button class="${f.comp==='all'?'on':''}" onclick="STATE.filters.comp='all';render()">All ${STATS.total}</button>
+      <button class="${f.comp==='need'?'on':''}" onclick="STATE.filters.comp='need';render()">Needs data ${STATS.noCat}</button>
+      <button class="${f.comp==='en'?'on':''}" onclick="STATE.filters.comp='en';render()">Enriched ${STATS.en}</button>
+    </div>
+    <div class="count"><b>${res.length}</b> match${res.length>shown.length?` · showing first ${shown.length}`:""}</div>
+  </div>
+  <div class="cards">${cards}</div>`;
+}
+function bindSearch(){
+  const q=$("#s_q");if(!q)return;
+  q.oninput=e=>{STATE.filters.q=e.target.value;const p=e.target.selectionStart;render();const n=$("#s_q");if(n){n.focus();n.setSelectionRange(p,p);}};
+  $("#s_cat").onchange=e=>{STATE.filters.cat=e.target.value;render();};
+  $("#s_region").onchange=e=>{STATE.filters.region=e.target.value;if(e.target.value!=='OH')STATE.filters.city='';render();};
+  $("#s_tier").onchange=e=>{STATE.filters.tier=e.target.value;render();};
+  const city=$("#s_city");if(city)city.onchange=e=>{STATE.filters.city=e.target.value;render();};
+  const upd=$("#s_updated");if(upd)upd.onchange=e=>{STATE.filters.updated=e.target.value;render();};
+}
+function openVendor(id){
+  const v=VENDORS.find(x=>x.id===id);if(!v)return;
+  const {c,score}=completeness(v);
+  const missing=Object.keys(c).filter(k=>!c[k]);
+  const marketBadges=[v.corp&&'Corporate',v.hc&&'Healthcare',v.sl&&'Senior Living',v.edu&&'Education'].filter(Boolean);
+  const safe=s=>String(s||'').replace(/[<>]/g,'');
+  const resourceLink=(url,label)=>{
+    if(!url) return '';
+    const isUrl=/^https?:\/\//i.test(url);
+    return isUrl
+      ? `<a class="reslink" href="${safe(url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${label} ↗</a>`
+      : `<span class="reslink note" title="${safe(url)}">${label} <span class="restxt">— see notes</span></span>`;
+  };
+  const hasResources=v.portal||v.mats||v.pl||v.cad||v.warr||v.clm;
+  $("#drawer").innerHTML=`
+    <div class="dh"><span class="close" onclick="closeDrawer()">×</span>
+      ${v.enriched?`<span class="badge-pill b-en" style="margin-bottom:10px">✓ Enriched &amp; current</span>`:`<span class="badge-pill b-leg" style="margin-bottom:10px">Legacy record · ${score}/5 fields</span>`}
+      <h2>${v.name} ${v.sif?`<span class="sif-badge" title="SIF code">${safe(v.sif)}</span>`:""}</h2>
+      <div style="font-size:13.5px;color:var(--muted)">${v.site||"no website on file"} · ${v.regions.map(r=>REGNAME[r]+(v.city&&r==='OH'?` (${v.city})`:'')).join(", ")}
+      ${v.tier?` · <span class="badge-pill b-tier" style="margin-left:4px">${v.tier}</span>`:""}</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:6px">Last confirmed ${v.updated.toLocaleDateString()} · ${agoLabel(v.updatedDays)}</div>
+      <div class="drawer-pills">
+        ${v.qs?'<span class="pill p-qs">⚡ Quick Ship</span>':''}
+        ${v.spiff?`<span class="pill p-spiff">💰 SPIFF${v.spiffUrl?` · <a href="${safe(v.spiffUrl)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">sign up</a>`:''}</span>`:''}
+        ${v.ergo?'<span class="pill p-mkt" style="background:#EAE6F4;color:#5A4A86">🧍 Ergonomic-forward</span>':''}
+        ${marketBadges.map(m=>`<span class="pill p-mkt">${m}</span>`).join('')}
+      </div>
+      <button class="addcart ${STATE.cart.includes(v.id)?'in':''}" style="margin-top:14px" onclick="toggleCart('${v.id}')">${STATE.cart.includes(v.id)?'✓ In quote project':'+ Add to quote project'}</button>
+    </div>
+    <div class="db">
+      ${v.caution?`<div class="cautbox"><b>⚠ Caution flag from legacy notes.</b> This vendor is marked “do not order / avoid” in the current sheet — exactly the kind of warning that’s invisible in a spreadsheet column and surfaces here instead.</div>`:""}
+      ${(v.cats.length||v.lead||v.disc||v.frt)?`
+        <div class="dl">
+          ${v.cats.length?`<div class="k">Categories</div><div class="v">${v.cats.join(" · ")}</div>`:""}
+          ${v.lead?`<div class="k">Lead time</div><div class="v">${v.lead} weeks</div>`:""}
+          ${v.war?`<div class="k">Warranty</div><div class="v">${v.war} years</div>`:""}
+          ${v.disc?`<div class="k">Discount off list</div><div class="v">${safe(v.disc)}</div>`:""}
+          ${v.frt?`<div class="k">Freight</div><div class="v">${safe(v.frt)}</div>`:""}
+        </div>`:`
+        <div class="gap">Here's everything our current sheet holds for ${v.name}. Missing: <b>${missing.join(", ")}</b>. Every time someone specs this vendor, those answers come from a phone call or memory.</div>`}
+
+      ${hasResources?`
+        <h4 style="margin-top:24px">Vendor resources</h4>
+        <div class="reslist">
+          ${resourceLink(v.pl,'📕 Price list')}
+          ${resourceLink(v.mats,'🎨 Materials &amp; finishes')}
+          ${resourceLink(v.cad,'📐 CAD / Revit')}
+          ${resourceLink(v.warr,'🛡 Warranty &amp; care')}
+          ${resourceLink(v.clm,'🧾 Claims process')}
+          ${resourceLink(v.portal,'🔐 Dealer portal')}
+        </div>`:''}
+
+      ${v.docs.length?`
+        <h4 style="margin-top:24px">Price books &amp; finishes (on file)</h4>
+        ${v.docs.map(d=>`<div class="doc" onclick="toast('Downloads from Drive in the live build')"><div class="ic">PDF</div><div><div class="nm">${d.n}</div><div class="mt">${d.t}</div></div><div style="margin-left:auto;color:var(--muted)">↓</div></div>`).join("")}`:''}
+
+      ${v.com?`<h4 style="margin-top:24px">COM ship-to</h4><div class="combox">${safe(v.com)}</div>`:''}
+      ${v.pcon?`<div class="opnote"><b>Purchasing contracts:</b> ${safe(v.pcon)}</div>`:''}
+      ${v.pinc?`<div class="opnote"><b>Recent price changes:</b> ${safe(v.pinc)}</div>`:''}
+
+      ${(v.showroom||v.showHours||v.showLoc)?`
+        <h4 style="margin-top:24px">Showroom</h4>
+        <div class="combox">
+          ${v.showroom&&v.showroom.n?`<div><b>${safe(v.showroom.n)}</b>${v.showroom.p?` · ${safe(v.showroom.p)}`:''}</div>`:''}
+          ${v.showroom&&v.showroom.e&&/@/.test(v.showroom.e)?`<div>${safe(v.showroom.e)}</div>`:''}
+          ${v.showLoc?`<div>${safe(v.showLoc)}</div>`:''}
+          ${v.showHours?`<div style="color:var(--muted)">Hours: ${safe(v.showHours)}</div>`:''}
+        </div>`:''}
+
+      ${(()=>{const sibs=repSiblings(v);if(sibs.length)return `
+        <div class="opnote"><b>Same rep also handles:</b> ${sibs.slice(0,10).map(s=>safe(s)).join(", ")}${sibs.length>10?` +${sibs.length-10} more`:''}. One contact can move all of these.</div>`;
+        if(v.repNote)return `<div class="opnote"><b>Same rep also handles:</b> ${safe(v.repNote)}. One contact can move all of these.</div>`;
+        return '';})()}
+
+      <h4 style="margin-top:26px">Contacts ${v.enriched?"(verified)":"(from legacy sheet)"}</h4>
+      ${v.contacts.length?v.contacts.map(c=>`<div class="contact"><div class="ct">${c.t}</div><b>${c.n}</b><br>${c.e?`<a class="emaillink" onclick="showEmailMock('${(c.e||'').replace(/'/g,"\\'")}','${(v.name||'').replace(/'/g,"\\'")}','${(c.n||'').replace(/'/g,"\\'")}')">${c.e}</a>`:"—"}${c.p?" · "+c.p:""}</div>`).join(""):`<div style="font-size:13px;color:var(--muted)">No usable contact in the legacy data either.</div>`}
+
+      ${!v.enriched?`<div class="demonote" style="margin-top:24px">Send ${v.name} the intake form → they fill the gaps → you approve → this panel shows the complete record. That’s the loop, on a real vendor.</div>`:`<div class="demonote" style="margin-top:24px">Vendor-supplied and approved. The annual refresh keeps it current; this clean shape is what feeds Room Builder.</div>`}
+    </div>`;
+  $("#drawer").classList.add("show");$("#scrim").classList.add("show");
+}
+function closeDrawer(){$("#drawer").classList.remove("show");$("#scrim").classList.remove("show");}
+function showEmailMock(email,vendor,contactName){
+  const firstName=(contactName||'').split(/[\s-]/)[0]||'there';
+  const subject=`Office Revolution — Quote request — [Project name]`;
+  const body=`Hi ${firstName},
+
+I'm specifying for an upcoming project at Office Revolution and would like to get a quote on [Product / quantity] from ${vendor}.
+
+A few quick details:
+  • Project: [Project name]
+  • Target install date: [Date]
+  • Quantity: [Qty]
+  • Finishes / COM: [Details]
+
+Could you also confirm current lead time and pricing? Happy to send over the spec doc if helpful.
+
+Thanks,
+[Designer name]
+Office Revolution`;
+  document.getElementById("em_to").textContent=email;
+  document.getElementById("em_sub").textContent=subject;
+  document.getElementById("em_body").textContent=body;
+  document.getElementById("emailmock").classList.add("show");
+}
+function closeEmailMock(){document.getElementById("emailmock").classList.remove("show");}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeEmailMock();closeDrawer();}});
+function viewDB(){
+  setTimeout(bindDB,0);
+  const f=STATE.dbq||"";
+  const rows=VENDORS.filter(v=>!f||(v.name+" "+v.regions.join(" ")+" "+v.cats.join(" ")+" "+v.contacts.map(c=>c.n+c.e).join(" ")).toLowerCase().includes(f.toLowerCase()));
+  return `
+  <div class="eyebrow">Vendor Database · raw populated records</div>
+  <h1>Vendors tab — populated from the Vendor Sheet</h1>
+  <p class="lede">Every record imported from our live “Vendor Sheet”, exactly as it sits in the Vendors table the
+  app reads from. ${VENDORS.length} vendors loaded — this is the data behind Designer Search.</p>
+  <div style="margin:24px 0 14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+    <input class="f" id="db_q" style="max-width:340px" placeholder="Filter ${VENDORS.length} vendors…" value="${f.replace(/"/g,'&quot;')}">
+    <span style="font-size:13px;color:var(--muted)"><b style="font-family:'Fraunces',serif;color:var(--ink);font-size:16px">${rows.length}</b> of ${VENDORS.length} shown</span>
+  </div>
+  <div style="border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)">
+   <div style="max-height:64vh;overflow:auto">
+   <table style="width:100%;border-collapse:collapse;font-size:13px">
+    <thead><tr style="text-align:left">
+      ${["#","Vendor","SIF","Regions","Status","Category","Discount","QS","SPIFF","Lead","Primary contact","Fields"].map(h=>`<th style="padding:11px 14px;font-weight:600;position:sticky;top:0;background:var(--ink);color:var(--paper);white-space:nowrap">${h}</th>`).join("")}
+    </tr></thead>
+    <tbody>
+    ${rows.map((v,i)=>{const o=completeness(v);const c=v.contacts[0];
+      return `<tr style="border-top:1px solid var(--line)${v.caution?';background:var(--red-soft)':''}">
+       <td style="padding:10px 14px;color:var(--muted)">${i+1}</td>
+       <td style="padding:10px 14px;font-weight:600;cursor:pointer;white-space:nowrap" onclick='openVendor("${v.id}")'>${v.name}${v.caution?' <span class="badge-pill b-caut">⚠</span>':''}</td>
+       <td style="padding:10px 14px;color:var(--muted);font-size:11.5px;letter-spacing:.04em;white-space:nowrap">${v.sif||'—'}</td>
+       <td style="padding:10px 14px;white-space:nowrap">${v.regions.map(r=>`<span class="badge-pill b-reg" style="margin-right:4px">${r}</span>`).join("")}</td>
+       <td style="padding:10px 14px">${v.enriched?'<span class="badge-pill b-en">Enriched</span>':'<span class="badge-pill b-leg">Legacy</span>'}</td>
+       <td style="padding:10px 14px;color:${v.cats.length?'var(--ink)':'var(--clay)'};min-width:180px">${v.cats.length?v.cats.join(", "):'— none on file —'}</td>
+       <td style="padding:10px 14px;font-size:12px;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${(v.disc||'').replace(/"/g,'&quot;')}">${v.disc?v.disc.slice(0,32)+(v.disc.length>32?'…':''):'<span style="color:var(--muted)">—</span>'}</td>
+       <td style="padding:10px 14px;text-align:center">${v.qs?'⚡':'<span style="color:var(--muted)">—</span>'}</td>
+       <td style="padding:10px 14px;text-align:center">${v.spiff?'💰':'<span style="color:var(--muted)">—</span>'}</td>
+       <td style="padding:10px 14px;white-space:nowrap">${v.lead?v.lead+' wk':'—'}</td>
+       <td style="padding:10px 14px;min-width:180px">${c?(c.n+(c.e?`<br><span style="color:var(--muted);font-size:12px">${c.e}</span>`:'')):'<span style="color:var(--muted)">—</span>'}</td>
+       <td style="padding:10px 14px;color:var(--muted);white-space:nowrap">${o.score}/5</td>
+      </tr>`;}).join("")}
+    </tbody>
+   </table>
+   </div>
+  </div>
+  <div class="demonote">This is the literal Vendors table the app runs on. Click any vendor name to open its full record.</div>`;
+}
+function bindDB(){const q=document.querySelector("#db_q");if(!q)return;q.oninput=e=>{STATE.dbq=e.target.value;const p=e.target.selectionStart;render();const n=document.querySelector("#db_q");if(n){n.focus();n.setSelectionRange(p,p);}};}
+
+// ---- Quote project (cart) ----
+let CARTMETA={name:"",loc:""};
+const LOC_OPTIONS=["Illinois","Ohio — Cleveland","Ohio — Columbus","North Carolina"];
+function quoteContact(v){
+  const order=["quotes","order entry","customer service","sales rep","contact"];
+  const withEmail=(v.contacts||[]).filter(c=>c.e&&/@/.test(c.e));
+  for(const role of order){const hit=withEmail.find(c=>(c.t||"").toLowerCase()===role);if(hit)return hit;}
+  return withEmail[0]||null;
+}
+function firstName(c){
+  if(!c||!c.n) return "";
+  if(/[,/]/.test(c.n)) return "";
+  if(/customer|order|sales|service|support|quote|team|dept|department/i.test(c.n)) return "";
+  return c.n.split(/\s+/)[0];
+}
+function quoteTemplate(v,proj,loc){
+  const c=quoteContact(v);
+  const fn=firstName(c);
+  const greet=fn?`Hi ${fn},`:"Hello,";
+  const where=loc?`\nProject location / ship-to: ${loc}.`:"";
+  return `${greet}
+
+We have a project in progress${proj?` (${proj})`:""} and would like to request a quote on ${v.name}.${where}
+
+Items / quantities:
+- 
+
+Please include current pricing, lead time, and freight terms — and flag anything that's changed recently on discounting or availability.
+
+Thanks,
+[Your name]
+Office Revolution`;
+}
+function createQuoteEmail(id){
+  const v=VENDORS.find(x=>x.id===id);if(!v)return;
+  const c=quoteContact(v);
+  if(!c||!c.e){toast("No email on file for this vendor — add one via intake first");return;}
+  const subj=`Quote request${CARTMETA.name?` — ${CARTMETA.name}`:""} (${v.name})`;
+  const body=quoteTemplate(v,CARTMETA.name,CARTMETA.loc);
+  window.location.href=`mailto:${c.e}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+  EMAILED.add(id);
+  setTimeout(()=>toast("Email draft opened — review and send"),300);
+  render();
+}
+function viewCart(){
+  const items=STATE.cart.map(id=>VENDORS.find(v=>v.id===id)).filter(Boolean);
+  setTimeout(bindCart,0);
+  if(!items.length){
+    return `
+    <div class="eyebrow">Quote project · build a batch, send one at a time</div>
+    <h1>Your quote project.</h1>
+    <p class="lede">This is where a designer collects the vendors they need quotes from on a given project, then fires off a ready-made email to each one — one click per vendor, no retyping the same request five times.</p>
+    <div class="howto-card" style="text-align:center;padding:40px 22px">
+      <p style="margin:0 0 16px">No vendors added yet. Head to Designer Search and hit <b>“+ Add to project”</b> on any vendor.</p>
+      <button class="btn clay" onclick="setView('search')">Go to Designer Search →</button>
+    </div>`;
+  }
+  const rows=items.map(v=>{
+    const c=quoteContact(v);
+    const done=EMAILED.has(v.id);
+    const tmpl=quoteTemplate(v,CARTMETA.name,CARTMETA.loc).replace(/[<>]/g,"");
+    return `<div class="crow">
+      <div class="crow-main">
+        <h3>${v.name}</h3>
+        <div class="crow-sub">${v.regions.join(", ")}${v.sif?` · SIF ${v.sif}`:""}</div>
+        ${c&&c.e?`<div class="crow-to">To: <b>${c.n||c.e}</b> · ${c.e} ${c.t?`<span style="color:var(--muted)">(${c.t})</span>`:""}</div>`:`<div class="crow-noemail">⚠ No email on file — this vendor needs enrichment before you can send.</div>`}
+        <details class="tmpl"><summary>Preview the email</summary><pre>Subject: Quote request${CARTMETA.name?` — ${CARTMETA.name}`:""} (${v.name})
+
+${tmpl}</pre></details>
+      </div>
+      <div class="crow-actions">
+        ${c&&c.e?`<button class="mailbtn ${done?'done':''}" onclick="createQuoteEmail('${v.id}')">${done?'✓ Email created':'Create email'}</button>`:`<button class="mailbtn" disabled style="opacity:.4;cursor:not-allowed">No email</button>`}
+        <button class="crow-rm" onclick="toggleCart('${v.id}')">Remove</button>
+      </div>
+    </div>`;
+  }).join("");
+  return `
+  <div class="eyebrow">Quote project · build a batch, send one at a time</div>
+  <h1>Your quote project.</h1>
+  <p class="lede">Set the project name and location once — every email below picks it up. Then click <b>Create email</b> on each vendor: your email program opens with the request filled in and addressed to the right contact. One vendor at a time, no copy-paste.</p>
+  <div class="cart-meta">
+    <div class="grp"><label for="cart_name">Project name</label><input id="cart_name" placeholder="e.g. Aon Lobby Refresh" value="${CARTMETA.name.replace(/"/g,'&quot;')}"></div>
+    <div class="grp"><label for="cart_loc">Project location / ship-to</label><select id="cart_loc"><option value="">— select —</option>${LOC_OPTIONS.map(o=>`<option ${CARTMETA.loc===o?'selected':''}>${o}</option>`).join("")}</select></div>
+  </div>
+  <div class="resulthead" style="margin-bottom:14px">
+    <div class="count"><b>${items.length}</b> vendor${items.length>1?'s':''} in this project</div>
+    <button class="btn ghost sm" onclick="STATE.cart=[];render()">Clear all</button>
+  </div>
+  ${rows}`;
+}
+function bindCart(){
+  const n=document.getElementById("cart_name");if(n)n.oninput=e=>{CARTMETA.name=e.target.value;};
+  const l=document.getElementById("cart_loc");if(l)l.onchange=e=>{CARTMETA.loc=e.target.value;};
+}
+
+// ---- How to use ----
+function viewHowTo(){
+  return `
+  <div class="eyebrow">How to use · for designers and the team</div>
+  <h1>How this works.</h1>
+  <p class="lede">The idea is simple: one place where every vendor's operational details live, kept current by the vendors themselves. Here's how to get the most out of it, and what to expect as it grows.</p>
+
+  <div class="howto-card">
+    <h3><span class="ic">🔍</span> Finding a vendor</h3>
+    <p>Designer Search is the main view. Filter by category, region, price point, or capability — quick-ship, SPIFF, ergonomic-forward, outdoor. Ohio can be narrowed to Cleveland or Columbus. The "Last updated" filter surfaces only vendors whose data was confirmed recently, so a tight spec can lean on the freshest records.</p>
+    <p>Open any vendor to see the full record: discount, freight, lead time, current price book, finishes, COM ship-to, warranty, and the right contact to reach.</p>
+  </div>
+
+  <div class="howto-card">
+    <h3><span class="ic">📨</span> Requesting quotes</h3>
+    <p>Found the vendors you need on a project? Hit <b>“+ Add to project”</b> on each one, then open the Quote Project page. Set the project name and location once, and each vendor gets a ready-made quote email addressed to the right contact. Click <b>Create email</b> and your email program opens with it filled in — review, and send. One vendor at a time, so each message stays personal.</p>
+  </div>
+
+  <div class="howto-card">
+    <h3><span class="ic">📋</span> What's expected of you</h3>
+    <ul>
+      <li><b>Trust it, but glance at the date.</b> Every record shows when it was last confirmed. If something looks stale on a high-stakes spec, a quick call still wins — the system tells you when that's worth doing.</li>
+      <li><b>Flag what's wrong.</b> If a discount or contact is out of date, say so — that's how the data stays honest. A wrong record that gets corrected is more valuable than a missing one.</li>
+      <li><b>Add what's missing.</b> Worked with a vendor that isn't here, or know a detail the record doesn't have? Send it through Vendor Intake so the next person benefits.</li>
+    </ul>
+  </div>
+
+  <div class="howto-card">
+    <h3><span class="ic">🔄</span> How the data stays current</h3>
+    <ul>
+      <li><b>Pricing updates.</b> Vendors are asked to confirm pricing and lead times on a cadence that matches how fast they actually change — weekly-movers get nudged more often than stable lines. The "Last updated" stamp reflects the most recent confirmation.</li>
+      <li><b>New vendors.</b> Anyone can submit a vendor through Intake. It lands in the review queue, gets a quick approval, and appears in search — no waiting on a single gatekeeper.</li>
+      <li><b>Annual refresh.</b> Once a year the whole list gets a confirmation pass so nothing quietly drifts out of date.</li>
+    </ul>
+  </div>
+
+  <div class="howto-card">
+    <h3><span class="ic">🤝</span> Vendors who rep multiple lines</h3>
+    <p>A single rep group often handles many manufacturers. When that's the case, the vendor record notes the other lines the same rep covers — so one phone call or email can move several lines at once.</p>
+  </div>
+
+  <div style="margin-top:22px;display:flex;gap:12px">
+    <button class="btn clay" onclick="setView('search')">Start searching →</button>
+    <button class="btn ghost" onclick="setView('concept')">← Back to the overview</button>
+  </div>`;
+}
+
+function viewImprovements(){
+  return `
+  <div class="eyebrow">Roadmap · what comes next, once v1 is live</div>
+  <h1>Future improvements.</h1>
+  <p class="lede">Ideas that didn’t make Version 1 — sorted by when they’ll actually pay off. The four <span style="color:var(--ok);font-weight:600">High</span> items in the first group are what I’d build right after launch. Phases 1 and 2 are real next steps. Phase 3 is for when the system has grown. Phase 4 is what we’re saying no to, so we don’t lose focus.</p>
+
+  <div class="phase">
+    <div class="phase-head"><div class="phase-num">01</div><div class="phase-title">First month — small fixes we’ll wish we had</div><div class="phase-when">Quick wins</div></div>
+    <div class="improvements">
+      <div class="imp high"><h4>A personal link in every vendor email<span class="lev h">High</span></h4>
+        <p>When we email a vendor to ask for an update, the link should already know who they are — so they don’t have to find their own name in a long list of 545. They just edit what’s there and hit submit. Without this, most vendors will give up before they start.</p>
+        <div class="meta"><span><b>Build:</b> a couple of hours</span><span><b>Impact:</b> way more vendors will actually respond</span></div>
+      </div>
+      <div class="imp high"><h4>Start with our top 30 vendors first<span class="lev h">High</span></h4>
+        <p>We shouldn’t email all 545 vendors on day one. Roll it out to the 30 vendors we work with most, learn from their feedback, then send it to everyone else in waves. Lower risk, better results.</p>
+        <div class="meta"><span><b>Build:</b> none — just a plan</span><span><b>Impact:</b> protects a smooth launch</span></div>
+      </div>
+      <div class="imp high"><h4>Tell each other when one of us approves<span class="lev h">High</span></h4>
+        <p>Right now we both get an email when a vendor submits. But when one of us approves it, the other person doesn’t hear back. That means we might both review the same thing — or both stop checking. Fix: when one of us approves, the other one gets a quick note.</p>
+        <div class="meta"><span><b>Build:</b> about an hour</span><span><b>Impact:</b> closes the loop between us</span></div>
+      </div>
+      <div class="imp high"><h4>Make the “do not order” warnings really stand out<span class="lev h">High</span></h4>
+        <p>5 vendors came in with “do not order / avoid” notes buried in the old data. Today they’re still showing as Active and a designer might use them by accident. Fix: switch them to Inactive automatically, or put a big red banner on their card so it’s impossible to miss.</p>
+        <div class="meta"><span><b>Build:</b> about half an hour</span><span><b>Impact:</b> stops a bad spec before it happens</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="phase-head"><div class="phase-num">02</div><div class="phase-title">Next few months — making the system smarter</div><div class="phase-when">Bigger wins</div></div>
+    <div class="improvements">
+      <div class="imp med"><h4>Lead times and warranties can be a number, a link, or a PDF<span class="lev m">High</span></h4>
+        <p>Vendors don’t always have one answer. Some product lines have a 6-week lead time, others 12 weeks. Same with warranties — different products have different terms. The form should let vendors paste a link to their warranty page, upload a PDF, or just type a number. Whatever they have on hand.</p>
+        <div class="meta"><span><b>Build:</b> a few hours</span><span><b>Impact:</b> matches how vendors actually work</span></div>
+      </div>
+      <div class="imp med"><h4>See which vendor products sell the most in our projects<span class="lev m">High</span></h4>
+        <p>Once vendor profiles are complete and tied to project specifications, we can show — for each vendor — which of their products show up most often in our projects. That tells us where we have real momentum with a vendor, which vendors are quietly dying off, and where we have room to grow. Becomes a real business tool, not just a contact list.</p>
+        <div class="meta"><span><b>Build:</b> a reporting view on top of the data we already have</span><span><b>Impact:</b> turns the database into a sales-strategy tool</span></div>
+      </div>
+      <div class="imp med"><h4>Mark our most important vendor partners (A / B / C)<span class="lev m">Medium</span></h4>
+        <p>Not every vendor is equally important to us. A simple A / B / C label on each vendor record lets designers find the partners we actually want them specifying first. Also helps us decide who reviews what — you and I don’t both need to review every change from a Tier C vendor.</p>
+        <div class="meta"><span><b>Build:</b> about an hour</span><span><b>Impact:</b> designers spec the right vendors first</span></div>
+      </div>
+      <div class="imp med"><h4>Send updates to a team chat tool, not just email<span class="lev m">Medium</span></h4>
+        <p>Approvals and new vendor submissions can be posted to a shared team chat channel instead of (or in addition to) email. Easier to see at a glance, easier to act on quickly, and it keeps a running history we can scroll back through.</p>
+        <div class="meta"><span><b>Build:</b> a couple of hours</span><span><b>Impact:</b> faster decisions, less inbox clutter</span></div>
+      </div>
+      <div class="imp med"><h4>Give vendors a real reason to keep their info fresh<span class="lev m">Medium</span></h4>
+        <p>“We sell more of your product if you give us good data” is true but a little soft. Stronger: vendors with complete, approved profiles get featured in our standard spec library, our monthly designer briefing, and our project pitch decks. Bigger reward for them, more control for us over what gets shown.</p>
+        <div class="meta"><span><b>Build:</b> mostly a policy decision</span><span><b>Impact:</b> faster vendor sign-ups</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="phase-head"><div class="phase-num">03</div><div class="phase-title">When we outgrow the spreadsheet</div><div class="phase-when">A year or two out</div></div>
+    <div class="improvements">
+      <div class="imp"><h4>Move to a real database when we get big enough<span class="lev m">Later</span></h4>
+        <p>Google Sheets is great for Version 1. Once we have a couple thousand vendor records or several people editing at the same time, it’ll start to slow us down. The natural next step is a tool like Airtable, or a free open-source one we can host ourselves. The data is already organized so it can move over without rebuilding anything. These tools also offer APIs, which is just a fancy word for letting our other systems connect to them automatically.</p>
+        <div class="meta"><span><b>Cost saved by self-hosting:</b> ~$20K/year</span><span><b>Build:</b> about two days, when we’re ready</span></div>
+      </div>
+      <div class="imp"><h4>Plug it straight into Room Builder<span class="lev m">High</span></h4>
+        <p>The vendor data is already shaped so Room Builder can use it directly. When we’re ready, Room Builder reads from this system in real time — no more keeping two lists of vendors in sync. The single source of truth you’ve been wanting.</p>
+        <div class="meta"><span><b>Build:</b> a small connector layer</span><span><b>Impact:</b> kills the duplicate-data problem for good</span></div>
+      </div>
+      <div class="imp"><h4>Show vendors how often we use their products<span class="lev m">Medium</span></h4>
+        <p>Give each vendor a private page where they can see how often their product was viewed or specified by our team. <i>“You’re in 14 active projects. Designers looked at your category 47 times last month.”</i> That kind of feedback turns the annual data refresh from a chore into something they actually want to do.</p>
+        <div class="meta"><span><b>Build:</b> about a week</span><span><b>Impact:</b> vendors compete to keep their data fresh</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="phase-head"><div class="phase-num">04</div><div class="phase-title">What we’re NOT going to build (on purpose)</div><div class="phase-when">Decided, not delayed</div></div>
+    <div class="improvements">
+      <div class="imp def"><h4>Search inside the text of every PDF<span class="lev d">No</span></h4>
+        <p>Designers don’t need to search the words inside a price book. They search for the vendor, open the price book, and use Ctrl-F themselves. Building real text-search would be a lot of work for almost no extra value.</p>
+      </div>
+      <div class="imp def"><h4>Track every tiny edit on every field<span class="lev d">No</span></h4>
+        <p>We already keep the full history of every vendor submission. Tracking line-by-line changes on top of that adds complexity that nobody actually uses.</p>
+      </div>
+      <div class="imp def"><h4>Let vendors be in more than one price tier at once<span class="lev d">No</span></h4>
+        <p>Some vendors span Good, Better and Best. The simple fix is one main tier plus a notes field. Trying to model every product line at the vendor level makes search confusing for designers, and they didn’t ask for it.</p>
+      </div>
+      <div class="imp def"><h4>Phone-friendly designer search<span class="lev d">No</span></h4>
+        <p>Designers don’t spec on their phones. They search from a desktop with the price book open and finish samples in front of them. Building a mobile version would be a feature nobody uses.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="demonote" style="margin-top:32px">If we only do one thing from this list in the first month after launch, it should be <b>the personal link in every vendor email</b>. That one decides whether vendors actually respond — and everything else depends on them responding.</div>
+  <div style="margin-top:22px;display:flex;gap:12px"><button class="btn ghost" onclick="setView('concept')">← Back to the pitch</button></div>`;
+}
+
+function render(){
+  const v=STATE.view;
+  stage.innerHTML=v==="concept"?viewConcept():v==="howto"?viewHowTo():v==="intake"?viewIntake():v==="approve"?viewApprove():v==="db"?viewDB():v==="future"?viewImprovements():v==="cart"?viewCart():viewSearch();
+  const nc=document.getElementById("navCart");
+  if(nc){ if(STATE.cart.length){nc.style.display="inline-block";nc.textContent=STATE.cart.length;} else {nc.style.display="none";} }
+}
+
+// === Notes feature (review/feedback) ===
+const NVIEWS={concept:"Concept / Overview",search:"Designer Search",intake:"Vendor Intake",approve:"Approval Queue",db:"Vendor Database",future:"Roadmap (Future)"};
+const NORDER=["concept","search","intake","approve","db","future"];
+const NEMAIL="asvalesen@office-revolution.com";
+let userNotes={};
+let userName="";
+
+function openNotes(){syncNotesPanel();document.getElementById("npanel").classList.add("show");document.getElementById("noverlay").classList.add("show");setTimeout(()=>document.getElementById("n_ta").focus(),300);}
+function closeNotes(){saveNotes();document.getElementById("npanel").classList.remove("show");document.getElementById("noverlay").classList.remove("show");}
+function syncNotesPanel(){
+  const v=STATE.view;
+  document.getElementById("n_which").textContent=NVIEWS[v]||v;
+  document.getElementById("n_ta").value=userNotes[v]||"";
+  document.getElementById("n_name").value=userName;
+  const others=NORDER.filter(k=>k!==v&&userNotes[k]&&userNotes[k].trim());
+  const block=document.getElementById("n_other");
+  const list=document.getElementById("n_other_list");
+  if(others.length===0){block.style.display="none";}
+  else{block.style.display="block";list.innerHTML=others.map(k=>`<div class="nother-item" onclick="jumpToNote('${k}')"><div class="lbl">${NVIEWS[k]}</div><div class="prev">${nEsc(userNotes[k])}</div></div>`).join("");}
+}
+function nEsc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function jumpToNote(v){saveNotes();setView(v);}
+function saveNotes(){
+  const ta=document.getElementById("n_ta");if(!ta)return;
+  userNotes[STATE.view]=ta.value;
+  userName=document.getElementById("n_name").value;
+  updateNotesBadge();
+}
+function updateNotesBadge(){
+  const count=Object.values(userNotes).filter(t=>t&&t.trim()).length;
+  const badge=document.getElementById("nct");
+  badge.textContent=count;
+  badge.classList.toggle("zero",count===0);
+}
+function buildEmailBody(){
+  const lines=[];
+  const who=userName.trim()||"(name not provided)";
+  lines.push(`Notes from ${who} on the Vendor Intelligence prototype.`);
+  lines.push("");
+  let any=false;
+  NORDER.forEach(k=>{
+    const t=(userNotes[k]||"").trim();
+    if(t){any=true;lines.push("— "+NVIEWS[k].toUpperCase()+" —");lines.push(t);lines.push("");}
+  });
+  if(!any)lines.push("(No notes added yet.)");
+  return lines.join("\n");
+}
+function sendNotes(){
+  saveNotes();
+  const count=Object.values(userNotes).filter(t=>t&&t.trim()).length;
+  if(count===0){toast("Add a note first, then hit Send");return;}
+  const who=userName.trim();
+  const subj=who?`Vendor Intelligence prototype — notes from ${who}`:"Vendor Intelligence prototype — notes";
+  const body=buildEmailBody();
+  const url=`mailto:${NEMAIL}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+  window.location.href=url;
+  setTimeout(()=>toast("Email draft opened — review and hit Send"),400);
+}
+function copyNotes(){
+  saveNotes();
+  const count=Object.values(userNotes).filter(t=>t&&t.trim()).length;
+  if(count===0){toast("Add a note first");return;}
+  const body=buildEmailBody();
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(body).then(()=>toast("Notes copied — paste into an email to Andy")).catch(()=>toast("Couldn't copy automatically"));
+  } else {
+    // Fallback for older browsers
+    const ta=document.createElement("textarea");ta.value=body;document.body.appendChild(ta);ta.select();
+    try{document.execCommand("copy");toast("Notes copied");}catch(e){toast("Couldn't copy");}
+    document.body.removeChild(ta);
+  }
+}
+
+// Hook setView so the notes panel stays in sync when she navigates while it's open
+const _origSetView=setView;
+setView=function(v){
+  if(document.getElementById("npanel")&&document.getElementById("npanel").classList.contains("show")){saveNotes();}
+  _origSetView(v);
+  if(document.getElementById("npanel")&&document.getElementById("npanel").classList.contains("show")){syncNotesPanel();}
+};
+
+
+/* ===== Live data + auth (production swap) ===== */
+const SUPA_URL  = "https://ewwzagcgkbuivbzeyurf.supabase.co";   /* <-- set to your Supabase project URL */
+const SUPA_ANON = "sb_publishable_iVZLK_SMWysjq_w7Ri273w_TNEVRpjX";             /* <-- set to your project anon (publishable) key */
+const _sb = window.supabase.createClient(SUPA_URL, SUPA_ANON);
+function _show(id){ const e=document.getElementById(id); if(e) e.style.display='flex'; }
+function _hide(id){ const e=document.getElementById(id); if(e) e.style.display='none'; }
+async function _loadData(){
+  const { data, error } = await _sb.rpc('vi_list_vendors');
+  if(error){ const mEl=document.getElementById('li-msg'); if(mEl) mEl.textContent='Could not load data: '+error.message; _show('login-overlay'); return; }
+  RAW = Array.isArray(data) ? data : [];
+  rebuildVendors();
+  try{ updateNotesBadge(); }catch(e){}
+  render();
+}
+async function _boot(){
+  try{
+    const { data:{ session } } = await _sb.auth.getSession();
+    if(session){ _hide('login-overlay'); _loadData(); } else { _show('login-overlay'); }
+  }catch(e){ _show('login-overlay'); }
+}
+_sb.auth.onAuthStateChange((_evt, session)=>{ if(session){ _hide('login-overlay'); _loadData(); } });
+(function(){
+  const magic=document.getElementById('li-magic'), goog=document.getElementById('li-google'), email=document.getElementById('li-email'), msg=document.getElementById('li-msg');
+  if(magic) magic.onclick = async ()=>{
+    const v=(email && email.value||'').trim();
+    if(!v){ if(msg) msg.textContent='Enter your email address.'; return; }
+    const { error } = await _sb.auth.signInWithOtp({ email:v, options:{ emailRedirectTo: location.href } });
+    if(msg) msg.textContent = error ? error.message : 'Check your email for a sign-in link.';
+  };
+  if(goog) goog.onclick = ()=> _sb.auth.signInWithOAuth({ provider: 'azure', options: { scopes: 'email', redirectTo: location.href } });
+  _boot();
+})();
+
+</script>
+</body>
+</html>
